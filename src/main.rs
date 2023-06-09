@@ -1,6 +1,6 @@
 use actix_web::{get, web, App, HttpServer};
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex
+use std::sync::Mutex;
 
 struct AppState {
     data: Mutex<Vec<KMEStorageData>>
@@ -31,7 +31,7 @@ struct KeyContainer {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-struct KeyExtensions
+struct KeyExtensions;
 
 #[get("/")]
 async fn index() -> String {
