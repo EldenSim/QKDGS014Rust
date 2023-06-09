@@ -48,7 +48,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(app_data.clone())
             .service(index)
-            .configure(services::config)
+            // .configure(service::config)
     })
     .bind(("127.0.0.1", 5000))?
     .run()
