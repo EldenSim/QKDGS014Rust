@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Deserialize, Clone)]
-pub struct ExtensionRequest
+pub struct ExtensionRequest;
 
 #[derive(Deserialize, Clone)]
 pub struct CreateKeyRequest {
