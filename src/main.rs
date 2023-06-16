@@ -6,6 +6,7 @@ use std::collections::HashMap;
 // use std::error::Error;
 
 use actix_web::{get, web, App, HttpServer};
+use actix_cors::Cors;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use std::fmt::Display;
@@ -14,6 +15,8 @@ use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
+
+
 
 mod access;
 use access::services;
@@ -139,8 +142,11 @@ async fn main() -> std::io::Result<()> {
     });
 
     HttpServer::new(move || {
+        // Need to remove for production server
+        let cors = Cors::default();
         App::new()
             .app_data(app_data.clone())
+            .wrap(cors)
             .service(index)
             .configure(services::config)
     })

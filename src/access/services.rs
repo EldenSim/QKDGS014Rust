@@ -21,7 +21,7 @@ struct Status {
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
 async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
     let storage_data = data.kme_storage_data.lock().unwrap().clone();
-    let key_data = data.key_data.lock().unwrap().clone();
+    let key_data = data.kme_key_data.lock().unwrap().clone();
     let slave_SAE_ID = path.into_inner();
     // for KME_ID in key_data.keys {
     //     if slave_SAE_ID != KME_ID {
