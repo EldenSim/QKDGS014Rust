@@ -1,0 +1,216 @@
+swagger: "2.0"
+
+# Information on the API specification
+info:
+  version: "0.0.1"
+  title: QKD GS 014 API draft (GovTech)
+  description: This specification is for the draft implementation of the ETSI GS 014 API. This API handles the request of keys by the Secure Application Entity from the Key Manager in a QKD Network.
+  
+  contact:
+    name: Elden
+    email: abc@gmail.com
+    
+  license:
+    name: license
+    url: http://license.com
+
+# Endpoint URL
+host: localhost:5001
+basePath: /api/v1/keys
+schemes:
+  - http
+  - https
+  
+consumes:
+  - application/json
+
+produces:
+ - application/json
+
+# From the GS 014 Doc
+tags:
+  - name: status
+    description: Returns Status from a KME to the calling SAE. Status contains information on keys available to be requested by a master SAE for a specified slave SAE.
+
+  - name: enc_keys
+    description: Returns Key container data from the KME to the calling master SAE. Key container data contains one or more keys. The calling master SAE may supply Key request data to specify the requirement on Key container data. The slave SAE specified by the slave_SAE_ID parameter may subsequently request matching keys from a remote KME using key_ID identifiers from the returned Key container.
+  - name: dec_keys
+    description: Returns Key container from the KME to the calling slave SAE. Key container contains keys matching those previously delivered to a remote master SAE based on the Key IDs supplied from the remote master SAE in response to its call to Get key. The KME shall reject the request with a 401 HTTP status code if the SAE ID of the requestor was not an SAE ID supplied to the "Get key" method each time it was called resulting in the return of any of the Key IDs being requested.
+
+# External docs to help developer (FAQ on a website)
+externalDocs:
+  description: This is an external doc
+  url: http://developer.xyz/docs
+
+# Definitions
+definitions:
+  GeneralError:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          $ref: "#/definitions/ErrorDetails"
+        minItems: 1 
+  ErrorDetails:
+    required:
+      - type
+      - reason
+    properties:
+      type:
+        type: string
+      reason:
+        type: string
+
+  status_res:
+    required:
+      - source_KME_ID
+      - target_KME_ID
+      - master_SAE_ID 
+      - slave_SAE_ID
+      - key_size
+      - stored_key_count
+      - max_key_count
+      - max_key_per_request
+      - min_key_size
+      - max_key_size
+      - max_SAE_ID_count
+    properties:
+      source_KME_ID:
+        type: string
+      target_KME_ID:
+        type: string
+      master_SAE_ID:
+        type: string
+      slave_SAE_ID:
+        type: string
+      key_size:
+        type: number
+        minimum: 64
+      stored_key_count:
+        type: number
+      max_key_count:
+        type: number
+      max_key_per_request:
+        type: number
+      min_key_size:
+        type: number
+        minimum: 1
+      max_key_size:
+        type: number
+      max_SAE_ID_count:
+        type: number
+      status_extension:
+        type: object
+
+  key_req:
+    required:
+      - number
+      - size
+    properties:
+      number:
+        type: number
+      size:
+        type: number
+      additional_slave_SAE_IDs:
+        type: array
+        items: 
+          type: string
+      extension_mandatory:
+        type: array
+        items:
+          type: object
+      extension_optional:
+        type: array
+        items:
+          type: object
+  
+  key_container_res:
+    required:
+      - keys
+    properties:
+      keys:
+        type: array
+        items:
+          $ref: "#/definitions/key"
+      key_container_extension:
+        type: object
+          
+  key:
+    required:
+      - key_ID
+      - key
+    properties:
+      key_ID:
+        type: string
+      key:
+        type: string
+      key_ID_extension:
+        type: object
+      key_extension:
+        type: object
+  
+  key_IDs_req:
+    required:
+      - key_IDs
+    properties:
+      key_IDs:
+        type: array
+        items:
+          $ref: "#/definitions/key_ID"
+      key_IDs_extension:
+        type: object
+        
+  key_ID:
+    required:
+      - key_ID
+    properties:
+      key_ID:
+        type: string
+      key_ID_extension:
+        type: object
+        
+
+parameters:
+  slaveSAEIDInPath:
+    name: slave_SAE_ID
+    in: path
+    type: string
+    required: true
+      
+  masterSAEIDInPath:
+    name: master_SAE_ID
+    in: path
+    type: string
+    required: true
+
+
+securityDefinitions:
+  KeySecurity:
+    type: apiKey
+    in: query
+    name: api_key
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
