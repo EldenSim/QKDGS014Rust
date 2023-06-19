@@ -22,8 +22,8 @@ servers:
       hostport:
         enum:
           - "127.0.0.1:443"
-          - "127.0.0.1:5001"
-        default: "127.0.0.1:5001"
+          - "127.0.0.1:8080"
+        default: "127.0.0.1:8080"
 
 # From the GS 014 Doc
 tags:
@@ -103,6 +103,7 @@ paths:
           schema:
             type: number
             format: int64
+            default: 1
           required: false
         - name: size
           in: query
