@@ -38,7 +38,7 @@ struct KMEStorageData {
     min_key_size: u32,
     max_key_size: u32,
     max_SAE_ID_count: u32,
-    stored_key_count: u32,
+    stored_key_count: usize,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -150,7 +150,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .configure(services::config)
     })
-    .bind(("127.0.0.1", 5001))?
+    .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
