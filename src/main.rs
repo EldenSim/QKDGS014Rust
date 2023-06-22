@@ -1,22 +1,20 @@
-use std::env;
 use dotenv::dotenv;
 use serde_json::Value;
-use std::fs;
 use std::collections::HashMap;
+use std::env;
+use std::fs;
 // use std::error::Error;
 
-use actix_web::{get, web, App, HttpServer};
 use actix_cors::Cors;
+use actix_web::{get, web, App, HttpServer};
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
 use std::fmt::Display;
+use std::sync::Mutex;
 
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
-
-
 
 mod access;
 use access::services;
@@ -43,7 +41,7 @@ struct KMEStorageData {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct KeyContainer {
-    keys: Vec<Key>
+    keys: Vec<Key>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -52,8 +50,7 @@ struct Key {
     key_ID: String,
     key: String,
     vendor: String,
-    extensions: Vec<KeyExtensions>
-    // extensions: HashMap<String, KeyExtensions>,
+    extensions: Vec<KeyExtensions>, // extensions: HashMap<String, KeyExtensions>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
@@ -62,8 +59,6 @@ struct KeyExtensions {
     max_age: Option<String>,
     transfer_method: Option<String>,
 }
-
-
 
 // #[derive(Serialize, Deserialize, Clone, Debug)]
 // struct KMEStatus {
@@ -94,7 +89,7 @@ impl Config {
         Ok(Config {
             kme_id,
             storage_path,
-            key_data_path
+            key_data_path,
         })
     }
 }
@@ -114,19 +109,20 @@ fn get_key_data(storage_path: String) -> Result<KeyContainer, Box<dyn Error>> {
     Ok(key_data)
 }
 
-
 #[get("/")]
 async fn index() -> String {
     "This is a test".to_string()
 }
 
-
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let config = Config::build();
-    let (kme_id, storage_path, key_data_path) = (config.clone().unwrap().kme_id, config.clone().unwrap().storage_path, config.clone().unwrap().key_data_path);
+    let (kme_id, storage_path, key_data_path) = (
+        config.clone().unwrap().kme_id,
+        config.clone().unwrap().storage_path,
+        config.clone().unwrap().key_data_path,
+    );
 
     // println!("{}", kme_id);
     // println!("{}", storage_path);
@@ -135,10 +131,9 @@ async fn main() -> std::io::Result<()> {
     let key_data = get_key_data(key_data_path);
     // println!("{:?}", key_data);
 
-
     let app_data = web::Data::new(AppState {
-        kme_storage_data: data.unwrap().clone().into(),
-        kme_key_data: key_data.unwrap().clone().into(),
+        kme_storage_data: data.unwrap().into(),
+        kme_key_data: key_data.unwrap().into(),
     });
 
     HttpServer::new(move || {

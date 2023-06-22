@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "actix-cors",
  "actix-web",
+ "base64",
  "dotenv",
  "serde",
  "serde_json",
