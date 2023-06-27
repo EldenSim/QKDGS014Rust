@@ -3,7 +3,7 @@ use actix_web::{get, post, web, HttpRequest, HttpResponse, Responder};
 use super::models::CreateKeyRequest;
 use crate::{AppState, KMEStorageData, Key, KeyContainer};
 use base64::{engine::general_purpose, Engine as _};
-use num::BigUint;
+use num::{BigUint, Num};
 use serde::{Deserialize, Serialize};
 use std::str;
 
@@ -117,13 +117,14 @@ async fn get_keys_get(
                         break;
                     }
                 };
-                println!("{:?}", decoded_bytes);
+                println!("Decoded bytes: {:?}", decoded_bytes);
                 let decoded_bytes_scaled: Vec<_> = decoded_bytes.iter().map(|x| *x - 48).collect();
                 let decoded_str: String = decoded_bytes_scaled
                     .iter()
                     .map(|&num| num.to_string())
                     .collect();
                 let decoded_key: BigUint = decoded_str.parse().unwrap();
+                println!("Decoded_key: {}", decoded_key);
                 let decoded_key_str = format!("{:b}", decoded_key);
                 if decoded_key.bits() < x {
                     // let warning: GeneralWarning = GeneralWarning {
@@ -133,17 +134,11 @@ async fn get_keys_get(
                 }
                 let truc_key_bin = &decoded_key_str[0..x as usize];
                 // Encode the key back
-                let truc_key_bytes = truc_key_bin.as_bytes();
-                println!("{:?}", truc_key_bytes);
-                let truc_key_dec: BigUint = BigUint::from_radix_be(truc_key_bytes, 10).unwrap();
-
-                // *key.key = truc_key
-                println!("{}", truc_key_bin);
-                println!("{}", truc_key_dec);
-                // println!("{}", decoded_str);
-                // println!("{}", decoded_key);
-                // println!("{}", decoded_key.bits());
-                // println!("{:b}", decoded_key);
+                let truc_key_bytes = BigUint::from_str_radix(truc_key_bin, 2).unwrap();
+                let truc_encode_key = encode(truc_key_bytes.to_string());
+                println!("{}", truc_encode_key);
+                // *key.key = truc_key;
+                // ERROR the 2nd key truc dont match with python server!!!!!!
                 println!()
             }
 
