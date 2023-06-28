@@ -23,6 +23,23 @@ struct Status {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+struct KeyContainerRes {
+    key_container_extension: Vec<Extension>,
+    keys: Vec<KeyRes>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct KeyRes {
+    key_ID: String,
+    key: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct Extension {
+    message: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct GeneralError {
     message: String,
 }
@@ -108,7 +125,6 @@ async fn get_keys_get(
         Some(x) => {
             for key in &mut matched_keys {
                 let key_str = &key.key;
-                println!("{}", key_str);
                 let decoded_bytes_res = general_purpose::STANDARD.decode(key_str);
                 let decoded_bytes = match decoded_bytes_res {
                     Ok(res) => res,
@@ -117,14 +133,12 @@ async fn get_keys_get(
                         break;
                     }
                 };
-                println!("Decoded bytes: {:?}", decoded_bytes);
                 let decoded_bytes_scaled: Vec<_> = decoded_bytes.iter().map(|x| *x - 48).collect();
                 let decoded_str: String = decoded_bytes_scaled
                     .iter()
                     .map(|&num| num.to_string())
                     .collect();
                 let decoded_key: BigUint = decoded_str.parse().unwrap();
-                println!("Decoded_key: {}", decoded_key);
                 let decoded_key_str = format!("{:b}", decoded_key);
                 if decoded_key.bits() < x {
                     // let warning: GeneralWarning = GeneralWarning {
@@ -136,22 +150,29 @@ async fn get_keys_get(
                 // Encode the key back
                 let truc_key_bytes = BigUint::from_str_radix(truc_key_bin, 2).unwrap();
                 let truc_encode_key = encode(truc_key_bytes.to_string());
-                println!("{}", truc_encode_key);
-                // *key.key = truc_key;
-                // ERROR the 2nd key truc dont match with python server!!!!!!
-                println!()
+                key.key = truc_encode_key;
             }
 
             matched_keys
-            // matched_keys.iter_mut().map(|Key {
-            //     key_ID,
-            //     key: decode(key)
-            // }|)
         }
         _ => matched_keys,
     };
 
-    HttpResponse::Ok().json(matched_keys)
+    // Clear the other variables not needed
+    let mut keys_vec = Vec::new();
+    for key in matched_keys {
+        keys_vec.push(KeyRes {
+            key_ID: key.key_ID,
+            key: key.key,
+        })
+    }
+    let extension = Extension { message: None };
+    let key_container_res = KeyContainerRes {
+        key_container_extension: vec![extension],
+        keys: keys_vec,
+    };
+
+    HttpResponse::Ok().json(key_container_res)
 }
 
 pub fn config(cfg: &mut web::ServiceConfig) {
