@@ -46,6 +46,11 @@ struct GeneralError {
 struct GeneralWarning {
     message: String,
 }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Params {
+    number: Option<u64>,
+    size: Option<u64>,
+}
 
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
 async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
@@ -84,12 +89,6 @@ async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl 
     };
 
     HttpResponse::Ok().json(status)
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Params {
-    number: Option<u64>,
-    size: Option<u64>,
 }
 
 #[get("/api/v1/keys/{slave_SAE_ID}/enc_keys")]
@@ -225,19 +224,4 @@ async fn get_keys_get(
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(get_status).service(get_keys_get);
-}
-
-fn encode(s: String) -> String {
-    general_purpose::STANDARD_NO_PAD.encode(s.as_bytes())
-}
-
-fn decode(s: String) -> String {
-    let bytes = general_purpose::STANDARD_NO_PAD
-        .decode(s.as_bytes())
-        .unwrap();
-    let s = match str::from_utf8(&bytes) {
-        Ok(v) => v,
-        Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
-    };
-    s.to_string()
 }
