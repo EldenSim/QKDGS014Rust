@@ -98,33 +98,73 @@ async fn get_keys_get(
     path: web::Path<String>,
     info: web::Query<Params>,
 ) -> impl Responder {
+    // Obtaining state data from the Appstate
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+
+    // Obtaining the params from the URL
     let slave_SAE_ID: String = path.into_inner();
     let (number, size) = (info.number, info.size);
 
+    // Checking if SAE_ID does not match server's SAE_ID
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
         };
         return HttpResponse::BadRequest().json(error);
     };
+
+    // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    for key in key_data.keys.iter() {
+    let extension_warning: Vec<Extension> = Vec::new();
+    for key in key_data.clone().keys.iter() {
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
             matched_keys.push(key.clone())
         }
     }
-    let mut matched_keys = match number {
-        Some(x) => matched_keys.splice(0..x as usize, []).collect(),
-        _ => matched_keys,
-    };
-    let mut matched_keys = match size {
-        // general_purpose::STANDARD_NO_PAD.decode(key).unwrap()
-        //  decoded_key_vec.iter_mut().map(|x| (*x - 48)).collect()
+    // If no keys match, return error message
+    if matched_keys.len() == 0 {
+        let error: GeneralError = GeneralError {
+            message: "No keys found in storage".to_string(),
+        };
+        return HttpResponse::NotFound().json(error);
+    }
+
+    // Unwrap number,
+    // if num = 0, return error
+    // else return Vec of respective num of keys
+    // If no number provided, default to 1
+    let mut matched_keys: Vec<Key> = match number {
         Some(x) => {
+            if x == 0 {
+                let error: GeneralError = GeneralError {
+                    message: "Invalid number param provided.".to_string(),
+                };
+                return HttpResponse::BadRequest().json(error);
+            }
+            matched_keys.splice(0..x as usize, []).collect()
+        }
+        _ => matched_keys.splice(0..1 as usize, []).collect(),
+    };
+
+    // Unwarp size,
+    // if size = 0, return error
+    // else return Vec of respective keys truncated
+    // If no size provided, default to whatever key size is stored
+    let mut matched_keys: Vec<Key> = match size {
+        Some(x) => {
+            // Check if size param is valid
+            if x == 0 {
+                let error: GeneralError = GeneralError {
+                    message: "Invalid size param provided.".to_string(),
+                };
+                return HttpResponse::BadRequest().json(error);
+            }
+
+            // loop through the remaining keys to mutate the key string
             for key in &mut matched_keys {
                 let key_str = &key.key;
+                // Decode the keys string into bytes from base64
                 let decoded_bytes_res = general_purpose::STANDARD.decode(key_str);
                 let decoded_bytes = match decoded_bytes_res {
                     Ok(res) => res,
@@ -133,26 +173,34 @@ async fn get_keys_get(
                         break;
                     }
                 };
+                // Scale the bytes to number range
                 let decoded_bytes_scaled: Vec<_> = decoded_bytes.iter().map(|x| *x - 48).collect();
+                // Join the number into a decimal string
                 let decoded_str: String = decoded_bytes_scaled
                     .iter()
                     .map(|&num| num.to_string())
                     .collect();
+                // Parse the decimal string into a BigUint
                 let decoded_key: BigUint = decoded_str.parse().unwrap();
+                // Format the decimal string into binary for truncation
                 let decoded_key_str = format!("{:b}", decoded_key);
+                // Check if requested size exceeds the key size
                 if decoded_key.bits() < x {
-                    // let warning: GeneralWarning = GeneralWarning {
-                    //     message: "Key"
-                    // }
-                    continue;
+                    let error: GeneralError = GeneralError {
+                        message: "Requested key size exceeds available key size.".to_string(),
+                    };
+                    return HttpResponse::NotFound().json(error);
                 }
+                // Slice the binary string into requested size
                 let truc_key_bin = &decoded_key_str[0..x as usize];
-                // Encode the key back
+                // Change the key back into a BigUint
                 let truc_key_bytes = BigUint::from_str_radix(truc_key_bin, 2).unwrap();
-                let truc_encode_key = encode(truc_key_bytes.to_string());
+                // Encode the key back into base64
+                let truc_encode_key =
+                    general_purpose::STANDARD.encode(truc_key_bytes.to_string().as_bytes());
+                // Update the truncated key string into key struct
                 key.key = truc_encode_key;
             }
-
             matched_keys
         }
         _ => matched_keys,
