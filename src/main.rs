@@ -146,6 +146,11 @@ async fn main() -> std::io::Result<()> {
         .unwrap();
     builder.set_certificate_chain_file("localhost.pem").unwrap();
 
+    // bind to local LAN ip address
+    use local_ip_address::local_ip;
+    let my_local_ip = local_ip().unwrap();
+    println!("Server is hosted on: https://{my_local_ip}:8080");
+
     HttpServer::new(move || {
         // Need to remove for production server
         let cors = Cors::default();
@@ -155,7 +160,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .configure(services::config)
     })
-    .bind_openssl("127.0.0.1:8080", builder)?
+    .bind_openssl(format!("{my_local_ip}:8080"), builder)?
     .run()
     .await
 }
