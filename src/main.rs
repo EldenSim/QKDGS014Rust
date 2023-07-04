@@ -7,6 +7,7 @@ use std::fs;
 
 use actix_cors::Cors;
 use actix_web::{get, web, App, HttpServer};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use std::sync::Mutex;
@@ -50,7 +51,7 @@ struct Key {
     key_ID: String,
     key: String,
     vendor: String,
-    extensions: Vec<KeyExtensions>, // extensions: HashMap<String, KeyExtensions>,
+    extensions: Vec<Option<KeyExtensions>>, // extensions: HashMap<String, KeyExtensions>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
@@ -109,6 +110,8 @@ fn get_key_data(storage_path: String) -> Result<KeyContainer, Box<dyn Error>> {
     Ok(key_data)
 }
 
+// fn get_extensions(storage_path: String) -> Result<Vec<Extensions>>
+
 #[get("/")]
 async fn index() -> String {
     "This is a test".to_string()
@@ -136,6 +139,13 @@ async fn main() -> std::io::Result<()> {
         kme_key_data: key_data.unwrap().into(),
     });
 
+    // Https certs
+    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    builder
+        .set_private_key_file("localhost-key.pem", SslFiletype::PEM)
+        .unwrap();
+    builder.set_certificate_chain_file("localhost.pem").unwrap();
+
     HttpServer::new(move || {
         // Need to remove for production server
         let cors = Cors::default();
@@ -145,7 +155,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .configure(services::config)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind_openssl("127.0.0.1:8080", builder)?
     .run()
     .await
 }

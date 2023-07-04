@@ -1,0 +1,7 @@
+{
+    "extension_mandatory": [
+        { "route_type": "String" },
+        { "transfer_method": "String" }
+    ],
+    "extension_optional": [{ "max_age": "String" }]
+}

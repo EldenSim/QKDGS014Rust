@@ -263,18 +263,41 @@ async fn get_keys_post(
         _ => matched_keys,
     };
 
+    // Unwrap extensions requested
+    // First check if vendor extension requested matches matched_keys vendor
+    // Next, check if extension value matches requested
     // let matched_keys: Vec<Key> = match extension_mandatory {
-    //     Some(hashmap) => {
-    //         let vendor_ext = String::new();
-    //         for extension in hashmap {
-    //             for (key, val) in extension {
-
+    //     Some(data) => {
+    //         // Obtain extension vendor
+    //         let mut ext_vendors = Vec::new();
+    //         for extension in &data {
+    //             for (k, v) in extension {
+    //                 let ext_parts: Vec<&str> = k.split("_").collect();
+    //                 ext_vendors.push(ext_parts[0]);
     //             }
     //         }
-    //         for key in &mut matched_keys {}
+    //         // Check extension vendor matches key vendor
+    //         // let mut matched_keys = matched_keys.iter().map(|key| {for vendor in ext_vendors{
+    //         //     if key.vendor != vendor
+    //         // }})
+    //         // for key in &matched_keys {
+    //         //     if key.vendor != ext_vendors[0] {
+    //         //         continue;
+    //         //     }
+    //         //     for extension in &key.extensions {
+    //         //         match extension {
+    //         //             Some(key_extension) => {
+    //         //                 let matched =
+    //         //             }
+    //         //             _ => {}
+    //         //         }
+    //         //     }
+    //         // }
+    //         matched_keys
     //     }
     //     _ => matched_keys,
     // };
+
     println!(
         "{}, {}, {:?}, {:?}",
         number.unwrap(),
@@ -282,6 +305,7 @@ async fn get_keys_post(
         extension_mandatory.unwrap(),
         extension_optional.unwrap()
     );
+
     // let mut matched_keys: Vec<Key> = Vec::new();
     // let extension_warning: Vec<Extension> = Vec::new();
     // let extension = Extension { message: None };
