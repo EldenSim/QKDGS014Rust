@@ -330,6 +330,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError> {
     for key in &mut keys {
         let key_str = &key.key;
+        println!("{}", key_str);
         // Decode the keys string into bytes from base64
         let decoded_bytes_res = general_purpose::STANDARD.decode(key_str);
         let decoded_bytes = match decoded_bytes_res {
@@ -348,8 +349,10 @@ fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError
             .collect();
         // Parse the decimal string into a BigUint
         let decoded_key: BigUint = decoded_str.parse().unwrap();
+        println!("{}", decoded_key);
         // Format the decimal string into binary for truncation
         let decoded_key_str = format!("{:b}", decoded_key);
+        println!("{}", decoded_key_str);
         // Check if requested size exceeds the key size
         println!("{}", decoded_key.bits());
         if decoded_key.bits() < size {
