@@ -141,7 +141,12 @@ async fn get_keys_get(
                 };
                 return HttpResponse::BadRequest().json(error);
             }
-            matched_keys.splice(0..x as usize, []).collect()
+
+            if matched_keys.len() < x as usize {
+                matched_keys
+            } else {
+                matched_keys.splice(0..x as usize, []).collect()
+            }
         }
         _ => matched_keys.splice(0..1 as usize, []).collect(),
     };
@@ -346,6 +351,7 @@ fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError
         // Format the decimal string into binary for truncation
         let decoded_key_str = format!("{:b}", decoded_key);
         // Check if requested size exceeds the key size
+        println!("{}", decoded_key.bits());
         if decoded_key.bits() < size {
             let error: GeneralError = GeneralError {
                 message: "Requested key size exceeds available key size.".to_string(),
