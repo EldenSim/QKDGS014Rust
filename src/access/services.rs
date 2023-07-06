@@ -336,7 +336,7 @@ async fn get_keys_post(
             let mut requested_keys: Vec<Key> = Vec::new();
             for key in &mut matched_keys {
                 // Some and None for key.extension NOT handled yet ERROR indirect routetype still showing
-                for (k, v) in &key.extensions {
+                for key_extensions in &key.extensions {
                     for (i, (k, v)) in key_extensions.iter().enumerate() {
                         if exts_requested.contains(&k.as_str()) && exts_values[i] == v {
                             requested_keys.push(key.clone());
