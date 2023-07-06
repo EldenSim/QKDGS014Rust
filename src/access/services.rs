@@ -5,6 +5,8 @@ use crate::{AppState, KMEStorageData, Key, KeyContainer};
 use base64::{engine::general_purpose, Engine as _};
 use num::{BigUint, Num};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::hash::Hash;
 use std::{f32::consts::E, str};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -42,6 +44,7 @@ struct Extension {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct GeneralError {
     message: String,
+    details: Option<HashMap<String, Vec<String>>>,
 }
 struct GeneralWarning {
     message: String,
@@ -60,6 +63,7 @@ async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl 
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
+            details: None,
         };
         return HttpResponse::BadRequest().json(error);
     };
@@ -106,6 +110,7 @@ async fn get_keys_get(
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
+            details: None,
         };
         return HttpResponse::BadRequest().json(error);
     };
@@ -125,6 +130,7 @@ async fn get_keys_get(
     if matched_keys.len() == 0 {
         let error: GeneralError = GeneralError {
             message: "No keys found in storage".to_string(),
+            details: None,
         };
         return HttpResponse::NotFound().json(error);
     }
@@ -138,6 +144,7 @@ async fn get_keys_get(
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid number param provided.".to_string(),
+                    details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
             }
@@ -161,6 +168,7 @@ async fn get_keys_get(
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid size param provided.".to_string(),
+                    details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
             }
@@ -203,6 +211,7 @@ async fn get_keys_post(
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
+            details: None,
         };
         return HttpResponse::BadRequest().json(error);
     };
@@ -219,6 +228,7 @@ async fn get_keys_post(
     if matched_keys.len() == 0 {
         let error: GeneralError = GeneralError {
             message: "No keys found in storage".to_string(),
+            details: None,
         };
         return HttpResponse::NotFound().json(error);
     }
@@ -238,6 +248,7 @@ async fn get_keys_post(
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid number param provided.".to_string(),
+                    details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
             }
@@ -255,6 +266,7 @@ async fn get_keys_post(
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid size param provided.".to_string(),
+                    details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
             }
@@ -271,6 +283,64 @@ async fn get_keys_post(
     // Unwrap extensions requested
     // First check if vendor extension requested matches matched_keys vendor
     // Next, check if extension value matches requested
+    match extension_mandatory {
+        Some(mut extensions) => {
+            // Loop through the vec
+            // Get the vendor
+            // Get the extension name and value
+            let mut exts_vendor: Vec<_> = Vec::new();
+            let mut exts_requested: Vec<_> = Vec::new();
+            for extension in &mut extensions {
+                for (k, v) in extension {
+                    match k.split_once("_") {
+                        Some((vendor, ext)) => {
+                            exts_vendor.push(vendor);
+                            exts_requested.push(ext)
+                        }
+                        None => {
+                            let error: GeneralError = GeneralError {
+                                message: "Invalid extension provided".to_string(),
+                                details: None,
+                            };
+                            return HttpResponse::BadRequest().json(error);
+                        }
+                    }
+                }
+                println!("{:?}", exts_vendor);
+                println!("{:?}", exts_requested);
+            }
+            let supported_extensions: Vec<String> =
+                vec!["route_type".to_string(), "transfer_method".to_string()];
+            let mut unsupported_extension = Vec::new();
+            for ext_requested in exts_requested {
+                if !supported_extensions.contains(&ext_requested.to_string()) {
+                    unsupported_extension.push(ext_requested.to_string());
+                }
+            }
+            println!("{:?}", unsupported_extension);
+            if unsupported_extension.len() > 0 {
+                let details = HashMap::from([(
+                    "extension_mandatory_unsupported".to_string(),
+                    unsupported_extension,
+                )]);
+                let error: GeneralError = GeneralError {
+                    message: "not all extension_mandatory parameters are supported".to_string(),
+                    details: Some(details),
+                };
+                return HttpResponse::BadRequest().json(error);
+            }
+            // Check if keys meet requested extension
+            // for key in &mut matched_keys {
+            //     for key_extensions in key.extensions {
+
+            //     }
+            // }
+        }
+        _ => {
+            unimplemented!()
+        }
+    }
+
     // let matched_keys: Vec<Key> = match extension_mandatory {
     //     Some(data) => {
     //         // Obtain extension vendor
@@ -303,13 +373,13 @@ async fn get_keys_post(
     //     _ => matched_keys,
     // };
 
-    println!(
-        "{}, {}, {:?}, {:?}",
-        number.unwrap(),
-        size.unwrap(),
-        extension_mandatory.unwrap(),
-        extension_optional.unwrap()
-    );
+    // println!(
+    //     "{}, {}, {:?}, {:?}",
+    //     number.unwrap(),
+    //     size.unwrap(),
+    //     extension_mandatory.unwrap(),
+    //     extension_optional.unwrap()
+    // );
 
     // let mut matched_keys: Vec<Key> = Vec::new();
     // let extension_warning: Vec<Extension> = Vec::new();
@@ -330,7 +400,6 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError> {
     for key in &mut keys {
         let key_str = &key.key;
-        println!("{}", key_str);
         // Decode the keys string into bytes from base64
         let decoded_bytes_res = general_purpose::STANDARD.decode(key_str);
         let decoded_bytes = match decoded_bytes_res {
@@ -349,15 +418,13 @@ fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError
             .collect();
         // Parse the decimal string into a BigUint
         let decoded_key: BigUint = decoded_str.parse().unwrap();
-        println!("{}", decoded_key);
         // Format the decimal string into binary for truncation
         let decoded_key_str = format!("{:b}", decoded_key);
-        println!("{}", decoded_key_str);
         // Check if requested size exceeds the key size
-        println!("{}", decoded_key.bits());
         if decoded_key.bits() < size {
             let error: GeneralError = GeneralError {
                 message: "Requested key size exceeds available key size.".to_string(),
+                details: None,
             };
             return Err(error);
         }

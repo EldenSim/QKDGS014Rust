@@ -1,21 +1,19 @@
+use actix_cors::Cors;
+use actix_web::{get, web, App, HttpServer};
 use dotenv::dotenv;
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::env;
-use std::fs;
-// use std::error::Error;
-
-use actix_cors::Cors;
-use actix_web::{get, web, App, HttpServer};
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
-use serde::{Deserialize, Serialize};
-use std::fmt::Display;
-use std::sync::Mutex;
-
 use std::error::Error;
+use std::fmt::Display;
+use std::fs;
 use std::fs::File;
 use std::io::BufReader;
+use std::net::{IpAddr, Ipv4Addr};
 use std::path::Path;
+use std::sync::Mutex;
 
 mod access;
 use access::services;
@@ -51,7 +49,7 @@ struct Key {
     key_ID: String,
     key: String,
     vendor: String,
-    extensions: Vec<Option<KeyExtensions>>, // extensions: HashMap<String, KeyExtensions>,
+    extensions: Option<Vec<KeyExtensions>>, // extensions: HashMap<String, KeyExtensions>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
@@ -127,13 +125,8 @@ async fn main() -> std::io::Result<()> {
         config.clone().unwrap().key_data_path,
     );
 
-    // println!("{}", kme_id);
-    // println!("{}", storage_path);
     let data = get_KME_storage_data(storage_path);
-    // println!("{:?}", data);
     let key_data = get_key_data(key_data_path);
-    // println!("{:?}", key_data);
-
     let app_data = web::Data::new(AppState {
         kme_storage_data: data.unwrap().into(),
         kme_key_data: key_data.unwrap().into(),
@@ -146,10 +139,15 @@ async fn main() -> std::io::Result<()> {
         .unwrap();
     builder.set_certificate_chain_file("localhost.pem").unwrap();
 
-    // // bind to local LAN ip address
-    // use local_ip_address::local_ip;
-    // let my_local_ip = local_ip().unwrap();
-    let my_local_ip = "127.0.0.1";
+    // bind to local LAN ip address
+    let localhost = true;
+    use local_ip_address::local_ip;
+    let my_local_ip = if localhost {
+        let localhost_v4 = IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1));
+        localhost_v4
+    } else {
+        local_ip().unwrap()
+    };
     println!("Server is hosted on: https://{my_local_ip}:8080");
 
     HttpServer::new(move || {
@@ -161,7 +159,6 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .configure(services::config)
     })
-    // .bind_openssl(format!("{my_local_ip}:8080"), builder)?
     .bind_openssl(format!("{my_local_ip}:8080"), builder)?
     .run()
     .await
