@@ -5,820 +5,814 @@
             "key": "MjM1MjQyMTMyNjcyMjMyNjgwMDIyNjMxMTA4NzY2MTQwMDE5NDQ3",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "484867f8-28b8-4f8a-900d-aa7e558ca60b",
             "key": "MjAxNDQ2NDMzMzUyNTIyNjQ0MDkxNjk3MDc5MDcyMDQ5Nzg5NzQz",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "35012b4e-f023-4dae-8174-7985d2679451",
             "key": "MTg1OTExNTM0MjkzNDc2NzM3OTA4MDg2NjY4MjE3ODAxMTEwMzcw",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "76723f4a-2bb4-4195-8e8f-1c42b1e75b44",
             "key": "MjUzNjY1NDgzNDk2MzY2NDk4ODU3MTc3NDU1NzkzNTAzMDM4NDk3",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "51ea3cce-bc8e-4931-bb65-351104a5b35f",
             "key": "MjAwMDgxODM5MTk1NDM1NzkxNjg0NzAzODU0NzE4NTAzNjYwNjE3",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "a40a1035-f69d-40e2-86b3-6fccc6e430e6",
             "key": "MjE2MTYxODA0MTc5MTM1MjQ4MjM4ODAxMDk4OTUyMzE1Mjg3MDI1",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "1e557fe8-187f-4962-a55a-e5f1261fdab7",
             "key": "MTc0MDYxMzk3NzMwMzgzMzYzMjY1ODUxMDk5MTY3NjQyMzI1NDUw",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "7d0b5a61-812e-4174-a5ec-0f1d1ef44be2",
             "key": "MjA4MTk5NDYwNDI3MTYyMzk2NTk1OTM4MDQ5NzAwODA5OTM3MjU4",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "8aa95259-2ce1-48f7-b9f1-cc4c780ca672",
             "key": "Mjc5MDM5MjY1Nzc2MTczNzg5NzUwNDYzNDAyNzIxMjM0MDA5MjIx",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "bb791ebc-6f77-42cc-9096-995b4ce466b2",
             "key": "MTgxNDIzODIwNDgwMTgwNjg4NjkxMjIxMDg5MjEzMDgxNDA4MjMx",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "2d5a863f-f5b1-4fea-9332-a4467c67b7ae",
             "key": "MjQwOTcxNjMyNDMzNDg3NDQ2MzYzMDI0MzEyMzMxNTg2OTY5OTgw",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "86b43426-71ee-45ad-996e-cf02f2c7a544",
             "key": "MjIzNDI3MTYwOTI5MDY4NzczOTc5NDQwMTEyMDIzNjc4OTkzOTUz",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "70cd60fa-c9af-4167-9f1b-2cd6e048a6dd",
             "key": "MTc3NzQyNzI2MDY2NDQxNDM2NDAwMzI4NDg3OTE2MDU3NjIzNzQ2",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "c731f341-61bf-4dfd-8b22-33fe8fdedd05",
             "key": "MjQ3NzAwMTQ0NDQ2MDU3MjI1MjcyOTMyNjEwNjY3ODExMDkzMjcz",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "03a0c55f-afd5-4ec5-b298-0618f332551f",
             "key": "MzM2ODc3MzU2NzE2NDIyNDI5MTAzNzY2Mzc3MTY1NzA0MjUzMjEx",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "8fd8e4e2-3b8d-4472-a564-11f53fb10218",
             "key": "Mjk2Njc5OTM0OTQwMDczNjE0NTkyMjIyMjUwNDU3NTk1NDMwNzg1",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "120b0545-240e-4608-b7e7-c2eac5ac93e8",
             "key": "MjUwNTg1MDU3MjE4ODg4NjMxNDEyMTE5NTE3MTE0ODEyMzA0MDYw",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "a3093899-8fce-4764-a0fa-cc23e0b8eda8",
             "key": "MjMwOTkzODM4MTY2MDk0NzI4MDc1MjQ2MDQyNTgzNzYyNjMyMjY4",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "3fd74d62-6fa1-4d90-928c-ff14c5db7019",
             "key": "Mjc1MzY4MDAyNDcyMDg1NTY2Mzk2MjQzODkwOTA5Mjk0MjkxOTY4",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "a4adb686-4832-4787-a5fc-84c768a27eb7",
             "key": "MTk5NjEyMzk1OTMxMDgwNDQ0NjE1NjY0NDcwNzc4NzkyODE3NDM3",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "6edd5232-69ae-4c55-ae3d-88c587c12e42",
             "key": "MTc0MjQyMzIzODkyNDk1MTExMTAyNjk3MjQzMjI5MDAyMTU2NTA3",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "d6ab6767-d231-453b-a3bf-9cae63ad0234",
             "key": "MjkwNDU1NzAyNTM3NTA5MzY4Mzg5OTU0OTcxNTk3Nzk2NDM0NTcy",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "6661f357-7348-44cc-8689-f369dba4ec82",
             "key": "MjMzNjA1MzkzNTI0ODAwNzk2MzE2NDg3MzM2NTM0ODUzNTc3OTE1",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "4a341775-37c3-44aa-9efc-c9b69b7195c1",
             "key": "MjAwODE3NTEwMzgyMjkxODU4MDUxMjU1ODA2MjM0OTMyNTY1OTUw",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "10962ad0-0905-45ee-b4ad-97bd6a66935c",
             "key": "MjUzOTQ4ODAyNTc1OTg0MTkxNjczMzExNTk2MzU4MjU5Njk3Mjkw",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "4f79856d-61c2-4462-bbaf-cc3631070f6d",
             "key": "Mjk0ODY1NzkyOTU1MTI2NzQ2NDY4MDIyMDA2OTMwODYzNzA4ODIw",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "209699b9-4f08-4d09-91ea-9a9bb89d138d",
             "key": "Mjk2NjUwMjg0MjA2NDE0MjY2Mjc0NjIxNzk2OTU4ODA4ODM2OTM0",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "90707916-5c86-4528-a9d9-556edb236519",
             "key": "MTkyODQ0ODI1NzkxODY2MTYyOTM2MDYxMjY4MzY2MzU0MDcyMDg3",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "7077080d-383b-42a1-885c-05db12301888",
             "key": "Mjk1NTgyMDEwOTkyNjEzOTI5Mzc2MzIzODUxMjA0MDcxNzE1MDY2",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "4cd157a6-d62a-41e5-88d4-601532024d40",
             "key": "MjY0NDA2MjY2Mjk1NjkzNzgyMDA4NjQzNTE0MjYwMDY2NzUzMTg2",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "8ab5f9d4-3294-4627-b539-2dbc8a02b5e0",
             "key": "Mjg4MzgzMjk3Mzg5ODUxNjM1NzM4OTI0ODc3NjE1MDIxODE5MzI2",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "8e9dec8f-3239-4e82-b9c3-4e6dd3c69dda",
             "key": "MTk3NjEzOTQ5OTk3NjEyMjgxNjQxNjY4NDc5MDU2MTAzNzIzNzA4",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "0473bd97-c894-40e7-853e-9ecfa39b2d9b",
             "key": "MjY5OTI0NTY3NzUzMDI5OTI2NDcxMDMyMzcwMjM4MjU5ODAxNzI4",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "770f6c45-ece0-4c69-938e-8b83258bd595",
             "key": "MzE1Mjk5MTEyNTQxMTcxMDc2ODUyNDgyODg5MTM1MDM1Nzc2NjU2",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "b4d1667f-c473-47f2-b502-5e750e591d78",
             "key": "MjM5NzI4Njc5ODU3OTIxNTMyNTQzNDA1ODk2NTYwOTg4ODE4NTk0",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "e77bc5f4-f0a6-4609-bf2b-5d688b1a3766",
             "key": "MjgxNjA1NTU0MjYyMTEyMTg2ODI4MTU4NTAzMTE2MzM1OTA1NDA0",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "bfb83cb5-601d-4d84-81d7-dbdc467ad838",
             "key": "MzMzMTY4MjI5ODk3Mjg5NDk4MDE4NTY4OTEwMzY0MDQ5MTg0NDM5",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "6ca0abf7-2f25-4bdd-8f5c-a0799cd012ab",
             "key": "MjU1Njg0OTQ4MjIwODUwOTEzODM4MzM0OTM4MTYwMjQ3Mjk0NTQx",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "5482556c-645a-4391-919e-1c15b1228eee",
             "key": "MTg2MjUxNDc2MDgwOTQ5MTE5Mjc3ODkxNDA4NjY5NDA1MTgwMzU4",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "24e1fc35-cbe6-42a7-bdba-6fa169b0dec0",
             "key": "MjgwNTc3MzM4MDQ5NDQ1OTY1MDg4Njg3ODAxMDc4MjM4Nzc0OTQ3",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "5f313e33-3d8d-4b53-af25-873eff678941",
             "key": "MjU5MjY0MjU0MjY5NzU4NTk4MjQwNDc3MzA3NTM4NTY0ODA3MzI0",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "bc384d06-bc85-466c-835c-c96783082a43",
             "key": "MzA0MDQzNzg0NzYzMjA4MTMxMDg3MzQ4NjA3MzE3MTA5MTA2Nzgy",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "4e676909-348d-45fc-a897-83af48123194",
             "key": "MjY3NzAxMTUzMDE2ODQ2MzkxMDg5NDQxMTQwMzcwMjE0MjY3MzA5",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "a7f6c9d5-0fed-49ad-808a-9bcd61a811b4",
             "key": "Mjk2OTE4MDA1NjY2MDAxMzYyMzU3MjI3MjM5NjYzMDI2NDQzNTI1",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "3f89cdec-3664-401a-a777-a24c6f660376",
             "key": "MTk2NTQyNTEwMTE0MDY0NTYzOTM1OTM0MjQ0NzYzNjI5OTc4ODI3",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "56dbe1de-eb69-4c64-aa0b-c5aa8ade8cdd",
             "key": "MzMzMTA3MzIwMzc3ODgxNDk5MzYxNjk3NTAxNDM4NTI0MDQwMTUw",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "516be48b-b79e-4efb-a912-fa982f28cdd6",
             "key": "Mjk0Mzc0NDkxNzE0Nzk2NDYzMzgwMTE4ODM2MDU0OTA1ODAzMzcy",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "b2ec0402-31d8-468b-a0f9-4604c3e69a73",
             "key": "Mjg4OTM1MDE0MjM0ODQ1NzA3MTExNTU0ODY1MDQ0MjE3NzUxOTE2",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "fbda497e-f456-47aa-b4c9-2391f7f214cd",
             "key": "MzEzNDA1MzcyNjQ4MTMzMjUxODExNjM3NzgzNTYzOTI2NjM5MTM0",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "815df8ae-d943-4827-b04f-d2aeef67a3a5",
             "key": "Mjc0MDYxOTA3OTg3NTE2NzM5MzQyOTQ0OTI3OTg1NDQ1NTQzNDcy",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "5aa3fe24-2e86-4cd1-9485-1db30dba349d",
             "key": "MjgwNDE2MDY3ODM0ODU3ODEwNTA2ODY4NzEwNTE1NTUxMTYxMzEw",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "f42d17d6-01be-4081-aed4-3c747403dc9e",
             "key": "Mjk5NDI3MTM5NTQ0OTYwNDUxMzA0MzAwODgwOTMxMDc0MjM4Mzc3",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "3af452a5-2b6d-44de-b848-59702d61c47a",
             "key": "MzM4OTY1MDA0OTg2Mjk2OTcxOTQ1MjQ5NjM3MjMwMDIzMDA4MjEy",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "d1d1292a-13bb-4878-bca7-9f6e34d2c727",
             "key": "MjI5NDE3Njc0NzY0ODUwMTg5ODQ4NTk3MDQ1OTA1NjMxMTQ0MTQw",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "6e2f26ec-97e6-40b0-bc2e-98aaf94db40a",
             "key": "MjExNTAyNzE3NzkyOTE2NDMyNDkzNjYyMDI0NTU4NjM5NTIwNDE2",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "bbb06793-001f-4373-bed4-e619c4811e51",
             "key": "MjYxNjQ4ODgzODQ1MTA3MTYyODQ4MzY2NDUwNDE1MzkyMTAxOTEw",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "35dfce41-fd63-4493-a90c-bceb2eadd643",
             "key": "MTgzMjIzNDY3NjA3NTY5Mzg4MTAyMDgzODMxMDQzMjM4NjM0MDM5",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "b6dbfb8d-6f28-420d-b153-2a9acac2ebd5",
             "key": "MTc4NzMyMjU4OTMxODEzMjIxOTY3NzI1OTUwMDQ1NDM0NTg0Mzg3",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "ba29925f-cbd6-4494-8b2f-7f69423ce269",
             "key": "MzE3NTk1OTc5MTcyNjAyODYwNTI1ODA1MTMyMzE5NjM2NzQ2NDUw",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "10c8ad0f-ccfd-4583-9fee-d735886f722e",
             "key": "MTg5NTYxOTM0NTMxMzIxNjM1NTA2ODM0Njc1MjY5ODg1MTQxMjgx",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "bdb900ad-a604-46b3-b825-eb82361ba3e3",
             "key": "MzEzMjQxNTM5NzU0NzEzNjE1NzE2MTA3MjA2NTcwMTczMzI2MDgy",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "77c18b5d-fa8f-4e1c-a0c5-505bb528e5c3",
             "key": "MjQ0MTM0NTc0ODgzMTI4MDIxMjcwNzQ0ODc2NzEwNDczNDAzMDgx",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "d56fa625-ff12-4da1-9e89-b3c821f95b31",
             "key": "MjQyMTU2MjgzNzc2MTU5MDc4MjYzNzA3NzgzODIzMzA5MTMyMzYx",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "ec2d8cb5-7193-40b3-9b72-9e1be93fc515",
             "key": "MTgzMDIwNTg4MDUwNDg4MTY3OTE1MjU4NDU4NTgwMDc3Nzg2NTQx",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "f94d3d9b-efe0-48a6-abdf-54caa065cb5c",
             "key": "Mjg5NzAyNzMzOTM4Mjc0NDE5NDE2NjM2MTExNTg2MTczODgyMzUy",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "cff80d2e-1f05-4433-9934-272ce0ffdd52",
             "key": "MzM2MzY1NDc0MzExODgyODkyOTI4MTE4OTYxNzIzOTgwNDUzMjA5",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "e6e573ba-7c57-4151-89d4-e57e2cebb955",
             "key": "MjA4NDg4OTE2MjcyMTcxMzQ1MjcwNjUzODM1Nzc5MDMyODY1NjMy",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "c741335d-ec8d-4ae5-b3e9-7a5fc5c2fc18",
             "key": "MjYzODU5Mzk0Mjg0ODk3MDM5NDM1NjI4NDUzNjE3NDI2MjQzMTMz",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "dab920cd-cc23-4457-978c-ce7d597e9470",
             "key": "MzMyMzEwODY1NTIxOTE4MDg5NTc3MjM4MTEzNDQzMTY0Nzk1NjU1",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "679b6807-96c6-41dc-bc83-d8b74b65c0e9",
             "key": "MjM5NzM2MTAzODAzODA3MzgzMDU0ODE1Mzg4NDk3OTk1MzA5OTg3",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "4986e852-a497-49ef-a08e-e4c90991b5cc",
             "key": "Mjg4MDg5ODkzNzg5NDY0ODYxNzcxODIyMTY5MzEyNDYwNTI2NjU5",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "2cd3874e-73d2-4d02-b671-fada2d25bb56",
             "key": "MTg2MTQ2MDY4NjE4NjYyNjE0NTA3Nzc1NTgyNTIzMDU2NTYxODQ2",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "9d63c205-ba23-498d-9ca5-7a88e4159d99",
             "key": "MjA1MDI3Nzk4NjY0MjQ0NjQ1NTg0NjQ3OTczMzg2MTQwMjQwOTc1",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "78d47783-790e-4806-be94-f8306bb4bbb8",
             "key": "MjY2ODM1NTYzMzkzNjUzMDY5MTQyOTUxMjI0OTQwMjAxMjU3NTk3",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "23779ae7-f65b-4606-986d-f0a910e41e4e",
             "key": "MTc2MjEzMDgwOTIwMjkxMzI1OTQ0MTk5NDc5MTU1Njk1MDQ4MTMx",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "bf6eca1a-1370-480e-ad1a-bb4bac9a1798",
             "key": "MzA5NTU2Mzc1NzEzNTA2MDY5MjUyNTU3ODUxMTg5NzA2MTI1MTQ5",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "5d7559dc-3135-4891-9a75-5807388adc0f",
             "key": "Mjg3NTU0NjUxMDE3NTE3MDI3OTg2OTc1MjQ0MDk4MjI3NDYxODE0",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "eaef263a-82a5-4201-9554-7f2ba8b8240c",
             "key": "MjM4MzQ5MjcxNDExNzI1NjY1MzU3OTM2MzMxNDMxMzY5NjQ2NDE0",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "aea67aa2-efbc-45ff-89f8-888444a4235f",
             "key": "Mjc3MjM3OTc4Mjc3MzgwNTc3MzQ3MTc4OTE3NjEzNDc2ODMxNjY4",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "1bfbe810-8957-4f25-af69-00dfbe9db160",
             "key": "MjExNDY5NTQxMTM2Mzk2NjUyNTAzMTgzMDczNjY2NDEwMTA3ODg3",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "1e876fc7-aa85-4505-9645-07d75341b735",
             "key": "MzE0NDc4NzM4NDM1NzA3NjMxMjY3NjQ1MTkwMDI4NzU0NjM1MzM3",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "36e33a45-4403-4d92-b325-e9aaa7811143",
             "key": "MzAyNzkxNzE5OTgxMjA2NzM3MjE1NzU0MDkyOTU2NTU2Mzg2MzU5",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "4cb049cf-35b7-43cb-8fad-24fc29fc2af7",
             "key": "MjE3NjAyOTYxOTI1MTY0MDQyNzQzNjk5ODQ2MjQ0OTI1MTE1MjI2",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "53f17d26-9601-48e6-81d2-6ea7b7f2d51c",
             "key": "MjI2MjM2NDAyOTI1NjYwMDI4MDEyNzE5ODcyNDYzNzMyNjU0NTE0",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "1279e6c6-511a-4859-9f2f-e8f2b146ebdc",
             "key": "MjYxODMxMTUwODEzNjM1OTAxOTkxMTcyODcyMDUzMzIwOTY4ODA0",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "b65c7bc6-24ed-48f1-8656-e7efa28fb827",
             "key": "MzM3MTk0Mzk1ODU1NzU5MTYzMTQ2OTkwODAwODE5Mzg1OTQ5ODAw",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "9bf52b5b-3d1a-4dda-a43b-18654965b1a8",
             "key": "MjA4Nzg5NTQ5MDI4NTM4OTYxMjQ2ODU0MjMxMDM5MjcyMzg2OTY5",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "9b42e5e8-724d-44c0-8090-60649736ff65",
             "key": "MzA4MzAyMTE5OTYxMTA5OTAzNzc3OTA3ODc3NjU2NDIzNDM3ODk1",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "9dcf0663-ad35-4894-a01a-11e501c6bf48",
             "key": "MjY3OTQ1MTgyNzAwMjEzNjU5NzY5NzAzMjI1MTU3MDk0Nzc1OTA0",
             "vendor": "ijk",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "qkd" }
-            ]
+            "extensions": { "route_type": "indirect", "transfer_method": "qkd" }
         },
         {
             "key_ID": "71d0d18b-99cc-415a-a196-8bf8bc88b4f6",
             "key": "MjQ4NjE3ODA1ODIyMzAyMzM1NzcxNTM0ODU5MzkwOTY1ODQyNjM0",
             "vendor": "abc",
             "KME_ID": "KME_2",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "a2342983-8899-4c33-9b0e-7df3f03699a2",
             "key": "MjMxNzM2NzkzMjg3MzkzODg3NjQ4ODEzODQ2MTQ0NzI1OTMxNjE0",
             "vendor": "xyz",
             "KME_ID": "KME_2",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "941cd07a-135f-42ea-98ba-7918301e2a47",
             "key": "MjEzNTc2Mjc2NzkzOTcxMzUxNTM2ODc1NjMxNTIwNDcwMDc0MDYw",
             "vendor": "ijk",
             "KME_ID": "KME_3",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "a21e9ed9-9dbe-468b-8c5c-f8ef2fa1d114",
             "key": "MjA0OTM0OTQ2NjcyODkyODE0MTMxOTA1NTk4OTIyNDcyOTMxNzk3",
             "vendor": "abc",
             "KME_ID": "KME_3",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "e908150e-e7dd-4f3e-b73e-597dad855330",
             "key": "MjQyNTA0NjIwMDQzMjc2NzI4NTQzNjM2MDQxMDE0NTUzODU5ODk4",
             "vendor": "xyz",
             "KME_ID": "KME_3",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "69d21f9c-3151-4bb4-b128-a50b6a61e8f1",
             "key": "MjkxNzkxNzg5NTA2MDUzNDQ1NzIxMzE5NjY5MTg4NDE4NzE2NTg0",
             "vendor": "ijk",
             "KME_ID": "KME_3",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "f4375315-c9ae-4dbc-a8c9-8bd3dd1a7265",
             "key": "MjM2Njc2NjE3NjIyMzc3MDU2MTQzMjgxMTA3MDc4MTI2NDM0MDUz",
             "vendor": "xyz",
             "KME_ID": "KME_3",
-            "extensions": [
-                { "route_type": "indirect", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "indirect",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "ee264e49-64db-4ff4-98ca-b494ef6736be",
             "key": "MTg2NjQ5OTQwMTAzOTMyNzM2NzYzMTExNzg2OTE2MDMxOTMxNDIy",
             "vendor": "xyz",
             "KME_ID": "KME_3",
-            "extensions": [{ "route_type": "direct", "transfer_method": "qkd" }]
+            "extensions": { "route_type": "direct", "transfer_method": "qkd" }
         },
         {
             "key_ID": "2f23f719-c8ad-4abd-8786-8e73577fea29",
             "key": "MzI5Mzc4NzMwNTM4NDkzMzk3OTc5NTk4MTczMzI1ODkzNTA1Njgx",
             "vendor": "abc",
             "KME_ID": "KME_3",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         },
         {
             "key_ID": "b2d56db3-862d-4de1-b3fa-12ca0f4ebb42",
             "key": "MTk0MDM2NjIwNzgwNTQzMzMxMzExODQ4MzYzMTUyNDA2MzQzMjgw",
             "vendor": "abc",
             "KME_ID": "KME_3",
-            "extensions": [
-                { "route_type": "direct", "transfer_method": "satelite" }
-            ]
+            "extensions": {
+                "route_type": "direct",
+                "transfer_method": "satelite"
+            }
         },
         {
             "key_ID": "a0d595ee-2ade-4555-83ee-da3be24a290a",
             "key": "Mjk2OTE0NzU2NTI4MTMyODgzODQ1NDc5NzQ1MjcxMjExMzc2NzMw",
             "vendor": "abc",
             "KME_ID": "KME_3",
-            "extensions": [{ "route_type": "indirect", "max_age": "30000" }]
+            "extensions": { "route_type": "indirect", "max_age": "30000" }
         }
     ]
 }

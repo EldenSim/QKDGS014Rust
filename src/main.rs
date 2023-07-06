@@ -49,7 +49,7 @@ struct Key {
     key_ID: String,
     key: String,
     vendor: String,
-    extensions: Option<Vec<KeyExtensions>>, // extensions: HashMap<String, KeyExtensions>,
+    extensions: Option<HashMap<String, String>>, // extensions: HashMap<String, KeyExtensions>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
