@@ -355,8 +355,7 @@ async fn get_keys_post(
                     let mut ext_met: Vec<bool> = Vec::new();
                     // Some and None for key.extension NOT handled yet ERROR indirect routetype still showing
                     for key_extensions in &key.extensions {
-                        for (i, (k, v)) in key_extensions.iter().enumerate() {
-                            println!("{}, {}, {}", i, k, v);
+                        for (k, v) in key_extensions {
                             if req_exts_hashmap.contains_key(&k.as_str())
                                 && req_exts_hashmap[&k.as_str()] == v
                             {
@@ -375,11 +374,7 @@ async fn get_keys_post(
         _ => matched_keys,
     };
 
-    // Unwrap number,
-    // if num = 0, return error
-    // else return Vec of respective num of keys
-    // If no number provided, default to 1
-
+    // Check if no keys match extension and return error
     if matched_keys.len() == 0 {
         let error: GeneralError = GeneralError {
             message: "No keys found meeting requested extensions".to_string(),
@@ -387,6 +382,11 @@ async fn get_keys_post(
         };
         return HttpResponse::NotFound().json(error);
     }
+
+    // Unwrap number,
+    // if num = 0, return error
+    // else return Vec of respective num of keys
+    // If no number provided, default to 1
     let matched_keys: Vec<Key> = match number {
         Some(x) => {
             if x == 0 {
@@ -397,7 +397,7 @@ async fn get_keys_post(
                 return HttpResponse::BadRequest().json(error);
             }
             if matched_keys.len() < x as usize {
-                let msg = format!("Number of keys request exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
+                let msg = format!("Number of keys request exceeds number of keys that met requirements, defaulting to {} keys that meet requirement", matched_keys.len());
                 let key_container_ext_msg = Extension { message: Some(msg) };
                 extension_msgs.push(key_container_ext_msg);
                 matched_keys
@@ -412,11 +412,11 @@ async fn get_keys_post(
             matched_keys.splice(0..1 as usize, []).collect()
         }
     };
+
     // Unwarp size,
     // if size = 0, return error
     // else return Vec of respective keys truncated
     // If no size provided, default to whatever key size is stored
-
     let matched_keys: Vec<Key> = match size {
         Some(x) => {
             // Check if size param is valid
@@ -456,6 +456,7 @@ async fn get_keys_post(
         _ => matched_keys,
     };
 
+    // Repackage key into KeyRes struct for KeyContainerRes
     let mut keys_vec = Vec::new();
     for key in matched_keys {
         keys_vec.push(KeyRes {
@@ -463,9 +464,8 @@ async fn get_keys_post(
             key: key.key,
         })
     }
-    let extension = Extension { message: None };
     let key_container_res = KeyContainerRes {
-        key_container_extension: vec![extension],
+        key_container_extension: extension_msgs,
         keys: keys_vec,
     };
     HttpResponse::Ok().json(key_container_res)
