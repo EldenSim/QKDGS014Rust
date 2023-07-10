@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::str;
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Status {
@@ -45,6 +46,10 @@ struct Extension {
 struct GeneralError {
     message: String,
     details: Option<HashMap<String, Vec<String>>>,
+}
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct ServerError {
+    message: String,
 }
 struct GeneralWarning {
     message: String,
@@ -493,17 +498,82 @@ async fn get_keys_with_keyID_get(
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
     // Obtaining slave SAE from path
-    let slave_SAE_ID: String = path.into_inner();
+    let master_SAE_ID: String = path.into_inner();
 
     // Checking if SAE_ID does not match server's SAE_ID
-    if slave_SAE_ID == storage_data.SAE_ID {
+    if master_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
-            message: "Invalid slave SAE_ID".to_string(),
+            message: "Invalid master SAE_ID".to_string(),
             details: None,
         };
         return HttpResponse::BadRequest().json(error);
     };
-    HttpResponse::Ok().json("Service 3")
+    // Obtain the keys that matches the SAE_ID in server's storage
+    let mut matched_keys: Vec<Key> = Vec::new();
+    for key in key_data.clone().keys.iter() {
+        // To be changed to ID lookup table
+        if key.KME_ID[3..] == master_SAE_ID[3..] {
+            matched_keys.push(key.clone())
+        }
+    }
+    // Check if key_ID param provided
+    let key_ID = match &info.key_ID {
+        Some(id) => {
+            // Use uuid crate to parse string to check if param is uuid format
+            if !Uuid::parse_str(id).is_ok() {
+                let error: GeneralError = GeneralError {
+                    message: "Invalid key_ID provided".to_string(),
+                    details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            }
+            id
+        }
+        _ => {
+            let error: GeneralError = GeneralError {
+                message: "No key_ID provided".to_string(),
+                details: None,
+            };
+            return HttpResponse::BadRequest().json(error);
+        }
+    };
+    // Obtain key that matches the key_ID requested
+    let mut requested_keys: Vec<Key> = Vec::new();
+    for key in matched_keys {
+        if &key.key_ID == key_ID {
+            requested_keys.push(key);
+        }
+    }
+    // Check if key is found
+    if requested_keys.len() == 0 {
+        let error: GeneralError = GeneralError {
+            message: "Requested key not found".to_string(),
+            details: None,
+        };
+        return HttpResponse::NotFound().json(error);
+    // If more than one key obtain, throw server error as this is not suppose to happen
+    } else if requested_keys.len() > 1 {
+        let error: ServerError = ServerError {
+            message: "Multiple key with same key_ID obtain".to_string(),
+        };
+        return HttpResponse::InternalServerError().json(error);
+    }
+
+    // Repackage key into KeyRes struct for KeyContainerRes
+    let mut keys_vec = Vec::new();
+    for key in requested_keys {
+        keys_vec.push(KeyRes {
+            key_ID: key.key_ID,
+            key: key.key,
+        })
+    }
+    let extension = Extension { message: None };
+    let key_container_res = KeyContainerRes {
+        key_container_extension: vec![extension],
+        keys: keys_vec,
+    };
+
+    HttpResponse::Ok().json(key_container_res)
 }
 
 pub fn config(cfg: &mut web::ServiceConfig) {
