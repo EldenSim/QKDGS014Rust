@@ -63,7 +63,6 @@ async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl 
     // Obtaining slave SAE from path
     let slave_SAE_ID: String = path.into_inner();
     // Checking if SAE_ID does not match server's SAE_ID
-
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
@@ -125,6 +124,7 @@ async fn get_keys_get(
 
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
+    let mut extension_msgs: Vec<Extension> = Vec::new();
     for key in key_data.clone().keys.iter() {
         // To be changed to ID lookup table
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
@@ -155,6 +155,9 @@ async fn get_keys_get(
             }
 
             if matched_keys.len() < x as usize {
+                let msg = format!("Number of keys request exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
+                let key_container_ext_msg = Extension { message: Some(msg) };
+                extension_msgs.push(key_container_ext_msg);
                 matched_keys
             } else {
                 matched_keys.splice(0..x as usize, []).collect()
@@ -195,9 +198,9 @@ async fn get_keys_get(
             key: key.key,
         })
     }
-    let extension = Extension { message: None };
+    // let extension = Extension { message: None };
     let key_container_res = KeyContainerRes {
-        key_container_extension: vec![extension],
+        key_container_extension: extension_msgs,
         keys: keys_vec,
     };
 
@@ -210,9 +213,13 @@ async fn get_keys_post(
     path: web::Path<String>,
     req_obj: web::Json<CreateKeyRequest>,
 ) -> impl Responder {
+    // Obtaining state data from the Appstate
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+    // Obtaining slave SAE from path
     let slave_SAE_ID: String = path.into_inner();
+
+    // Checking if SAE_ID does not match server's SAE_ID
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
@@ -222,7 +229,6 @@ async fn get_keys_post(
     };
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    let extension_warning: Vec<Extension> = Vec::new();
     for key in key_data.clone().keys.iter() {
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
             matched_keys.push(key.clone())
