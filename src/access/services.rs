@@ -122,9 +122,10 @@ async fn get_keys_get(
     // Obtaining the params from the URL
     let (number, size) = (info.number, info.size);
 
+    // For key container extensions
+    let mut extension_msgs: Vec<Extension> = Vec::new();
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    let mut extension_msgs: Vec<Extension> = Vec::new();
     for key in key_data.clone().keys.iter() {
         // To be changed to ID lookup table
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
@@ -252,6 +253,8 @@ async fn get_keys_post(
         };
         return HttpResponse::BadRequest().json(error);
     };
+    // For key container extensions
+    let mut extension_msgs: Vec<Extension> = Vec::new();
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
     for key in key_data.clone().keys.iter() {
@@ -393,11 +396,22 @@ async fn get_keys_post(
                 };
                 return HttpResponse::BadRequest().json(error);
             }
-            matched_keys.splice(0..x as usize, []).collect()
+            if matched_keys.len() < x as usize {
+                let msg = format!("Number of keys request exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
+                let key_container_ext_msg = Extension { message: Some(msg) };
+                extension_msgs.push(key_container_ext_msg);
+                matched_keys
+            } else {
+                matched_keys.splice(0..x as usize, []).collect()
+            }
         }
-        _ => matched_keys.splice(0..1 as usize, []).collect(),
+        _ => {
+            let msg = "Number of keys not specified, defaulting to 1 key returned".to_string();
+            let key_container_ext_msg = Extension { message: Some(msg) };
+            extension_msgs.push(key_container_ext_msg);
+            matched_keys.splice(0..1 as usize, []).collect()
+        }
     };
-
     // Unwarp size,
     // if size = 0, return error
     // else return Vec of respective keys truncated
@@ -410,6 +424,25 @@ async fn get_keys_post(
                 let error: GeneralError = GeneralError {
                     message: "Invalid size param provided.".to_string(),
                     details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            } else if x % 8 != 0 {
+                let error: GeneralError = GeneralError {
+                    message: "Size parameter shall be a multiple of 8".to_string(),
+                    details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            // Check if size param exceeds stored key size
+            // Can prob change to message only
+            } else if x > storage_data.key_size as u64 {
+                let details_key: String =
+                    format!("Key size stored in KME: {}", storage_data.key_size);
+                let details_val: Vec<_> = vec![format!("Key size requested: {}", x)];
+                let details: HashMap<String, Vec<String>> =
+                    HashMap::from([(details_key, details_val)]);
+                let error: GeneralError = GeneralError {
+                    message: "Size paramter exceeded stored key size".to_string(),
+                    details: Some(details),
                 };
                 return HttpResponse::BadRequest().json(error);
             }
