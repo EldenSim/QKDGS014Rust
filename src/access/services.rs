@@ -1,6 +1,6 @@
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, Responder};
 // use actix_web::Error::{BadRequest};
-use super::models::CreateKeyRequest;
+use super::models::{CreateKeyIDRequest, CreateKeyRequest};
 use crate::{AppState, KMEStorageData, Key, KeyContainer};
 use base64::{engine::general_purpose, Engine as _};
 use num::{BigUint, Num};
@@ -40,6 +40,7 @@ struct KeyRes {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Extension {
     message: Option<String>,
+    details: Option<HashMap<String, Vec<String>>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -169,7 +170,10 @@ async fn get_keys_get(
             // Returns warning if so
             if matched_keys.len() < x as usize {
                 let msg = format!("Number of keys request exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
-                let key_container_ext_msg = Extension { message: Some(msg) };
+                let key_container_ext_msg = Extension {
+                    message: Some(msg),
+                    details: None,
+                };
                 extension_msgs.push(key_container_ext_msg);
                 matched_keys
             } else {
@@ -178,7 +182,10 @@ async fn get_keys_get(
         }
         _ => {
             let msg = "Number of keys not specified, defaulting to 1 key returned".to_string();
-            let key_container_ext_msg = Extension { message: Some(msg) };
+            let key_container_ext_msg = Extension {
+                message: Some(msg),
+                details: None,
+            };
             extension_msgs.push(key_container_ext_msg);
             matched_keys.splice(0..1 as usize, []).collect()
         }
@@ -414,7 +421,10 @@ async fn get_keys_post(
             // Returns warning if so
             if matched_keys.len() < x as usize {
                 let msg = format!("Number of keys request exceeds number of keys that met requirements, defaulting to {} keys that meet requirement", matched_keys.len());
-                let key_container_ext_msg = Extension { message: Some(msg) };
+                let key_container_ext_msg = Extension {
+                    message: Some(msg),
+                    details: None,
+                };
                 extension_msgs.push(key_container_ext_msg);
                 matched_keys
             } else {
@@ -423,7 +433,10 @@ async fn get_keys_post(
         }
         _ => {
             let msg = "Number of keys not specified, defaulting to 1 key returned".to_string();
-            let key_container_ext_msg = Extension { message: Some(msg) };
+            let key_container_ext_msg = Extension {
+                message: Some(msg),
+                details: None,
+            };
             extension_msgs.push(key_container_ext_msg);
             matched_keys.splice(0..1 as usize, []).collect()
         }
@@ -567,7 +580,10 @@ async fn get_keys_with_keyID_get(
             key: key.key,
         })
     }
-    let extension = Extension { message: None };
+    let extension = Extension {
+        message: None,
+        details: None,
+    };
     let key_container_res = KeyContainerRes {
         key_container_extension: vec![extension],
         keys: keys_vec,
@@ -576,11 +592,124 @@ async fn get_keys_with_keyID_get(
     HttpResponse::Ok().json(key_container_res)
 }
 
+#[post("/api/v1/keys/{master_SAE_ID}/dec_keys")]
+async fn get_keys_with_keyID_post(
+    data: web::Data<AppState>,
+    path: web::Path<String>,
+    req_obj: web::Json<CreateKeyIDRequest>,
+) -> impl Responder {
+    // Obtaining state data from the Appstate
+    let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
+    let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+    // Obtaining slave SAE from path
+    let master_SAE_ID: String = path.into_inner();
+
+    // Checking if SAE_ID does not match server's SAE_ID
+    if master_SAE_ID == storage_data.SAE_ID {
+        let error: GeneralError = GeneralError {
+            message: "Invalid master SAE_ID".to_string(),
+            details: None,
+        };
+        return HttpResponse::BadRequest().json(error);
+    };
+    // Obtain the keys that matches the SAE_ID in server's storage
+    let mut matched_keys: Vec<Key> = Vec::new();
+    let mut key_IDs: Vec<String> = Vec::new();
+    for key in key_data.clone().keys.iter() {
+        // To be changed to ID lookup table
+        if key.KME_ID[3..] == master_SAE_ID[3..] {
+            matched_keys.push(key.clone());
+            key_IDs.push(key.key_ID.clone());
+        }
+    }
+    let mut extension_msgs: Vec<Extension> = Vec::new();
+    let mut invalid_IDs = Vec::new();
+    let mut valid_IDs = Vec::new();
+    let mut req_key_IDs = match &req_obj.key_IDs {
+        Some(req_key_IDs) => {
+            for key_ID in req_key_IDs {
+                for (k, v) in key_ID {
+                    if !Uuid::parse_str(&v).is_ok() {
+                        invalid_IDs.push(v.to_string());
+                    } else {
+                        valid_IDs.push(v.to_string());
+                    }
+                }
+            }
+            if invalid_IDs.len() == req_key_IDs.len() {
+                let error: GeneralError = GeneralError {
+                    message: "Invalid key_IDs provided".to_string(),
+                    details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+                // } else if invalid_IDs.len() < req_key_IDs.len() {
+                //     println!("{:?}", invalid_IDs);
+                //     let msg: String = format!("{} key_ID provided not found in KME", invalid_IDs.len());
+                //     let details = HashMap::from([("key_IDs not found".to_string(), invalid_IDs)]);
+                //     let key_container_ext_msg = Extension {
+                //         message: Some(msg),
+                //         details: Some(details),
+                //     };
+                //     extension_msgs.push(key_container_ext_msg);
+            }
+            valid_IDs
+        }
+        _ => vec![],
+    };
+    let mut requested_keys: Vec<Key> = Vec::new();
+    let mut not_found_IDs: Vec<String> = Vec::new();
+    let mut found_IDs: Vec<String> = Vec::new();
+    let KME_key_IDs: Vec<String> = matched_keys.iter().map(|key| key.key_ID.clone()).collect();
+    for req_key_ID in req_key_IDs {
+        if KME_key_IDs.contains(&req_key_ID) {
+            found_IDs.push(req_key_ID);
+        } else {
+            not_found_IDs.push(req_key_ID);
+        }
+    }
+    if not_found_IDs.len() > 0 {
+        let msg: String = format!("{} key_ID provided not found in KME", not_found_IDs.len());
+        let details = HashMap::from([("key_IDs not found".to_string(), not_found_IDs)]);
+        let key_container_ext_msg = Extension {
+            message: Some(msg),
+            details: Some(details),
+        };
+        extension_msgs.push(key_container_ext_msg);
+    }
+    for key in matched_keys {
+        if found_IDs.contains(&key.key_ID) {
+            requested_keys.push(key);
+        }
+    }
+
+    if requested_keys.len() == 0 {
+        let error: GeneralError = GeneralError {
+            message: "Requested keys not found".to_string(),
+            details: None,
+        };
+        return HttpResponse::NotFound().json(error);
+    }
+    // Repackage key into KeyRes struct for KeyContainerRes
+    let mut keys_vec = Vec::new();
+    for key in requested_keys {
+        keys_vec.push(KeyRes {
+            key_ID: key.key_ID,
+            key: key.key,
+        })
+    }
+    let key_container_res = KeyContainerRes {
+        key_container_extension: extension_msgs,
+        keys: keys_vec,
+    };
+    HttpResponse::Ok().json(key_container_res)
+}
+
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(get_status)
         .service(get_keys_get)
         .service(get_keys_post)
-        .service(get_keys_with_keyID_get);
+        .service(get_keys_with_keyID_get)
+        .service(get_keys_with_keyID_post);
 }
 
 fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError> {

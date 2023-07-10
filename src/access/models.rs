@@ -9,3 +9,8 @@ pub struct CreateKeyRequest {
     pub extension_mandatory: Option<Vec<HashMap<String, String>>>,
     pub extension_optional: Option<Vec<HashMap<String, String>>>,
 }
+
+#[derive(Deserialize, Clone)]
+pub struct CreateKeyIDRequest {
+    pub key_IDs: Option<Vec<HashMap<String, String>>>,
+}
