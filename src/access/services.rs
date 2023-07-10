@@ -623,9 +623,10 @@ async fn get_keys_with_keyID_post(
         }
     }
     let mut extension_msgs: Vec<Extension> = Vec::new();
+    // Data validation of key_IDs
     let mut invalid_IDs = Vec::new();
     let mut valid_IDs = Vec::new();
-    let mut req_key_IDs = match &req_obj.key_IDs {
+    let req_key_IDs = match &req_obj.key_IDs {
         Some(req_key_IDs) => {
             for key_ID in req_key_IDs {
                 for (k, v) in key_ID {
@@ -636,26 +637,25 @@ async fn get_keys_with_keyID_post(
                     }
                 }
             }
+            // Check if all the requested key_IDs are invalid and return Error
             if invalid_IDs.len() == req_key_IDs.len() {
                 let error: GeneralError = GeneralError {
                     message: "Invalid key_IDs provided".to_string(),
                     details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
-                // } else if invalid_IDs.len() < req_key_IDs.len() {
-                //     println!("{:?}", invalid_IDs);
-                //     let msg: String = format!("{} key_ID provided not found in KME", invalid_IDs.len());
-                //     let details = HashMap::from([("key_IDs not found".to_string(), invalid_IDs)]);
-                //     let key_container_ext_msg = Extension {
-                //         message: Some(msg),
-                //         details: Some(details),
-                //     };
-                //     extension_msgs.push(key_container_ext_msg);
             }
             valid_IDs
         }
-        _ => vec![],
+        _ => {
+            let error: GeneralError = GeneralError {
+                message: "No key_IDs provided".to_string(),
+                details: None,
+            };
+            return HttpResponse::BadRequest().json(error);
+        }
     };
+    // Check if key_IDs is found in KME storage
     let mut requested_keys: Vec<Key> = Vec::new();
     let mut not_found_IDs: Vec<String> = Vec::new();
     let mut found_IDs: Vec<String> = Vec::new();
@@ -667,6 +667,7 @@ async fn get_keys_with_keyID_post(
             not_found_IDs.push(req_key_ID);
         }
     }
+    // If key_ID is not found is throw warning in the key container extension
     if not_found_IDs.len() > 0 {
         let msg: String = format!("{} key_ID provided not found in KME", not_found_IDs.len());
         let details = HashMap::from([("key_IDs not found".to_string(), not_found_IDs)]);
@@ -676,12 +677,13 @@ async fn get_keys_with_keyID_post(
         };
         extension_msgs.push(key_container_ext_msg);
     }
+    // Push keys found into requested_key vec
     for key in matched_keys {
         if found_IDs.contains(&key.key_ID) {
             requested_keys.push(key);
         }
     }
-
+    // Final check if there are keys found (Should not be needed)
     if requested_keys.len() == 0 {
         let error: GeneralError = GeneralError {
             message: "Requested keys not found".to_string(),
