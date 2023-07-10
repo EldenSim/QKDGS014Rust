@@ -4,8 +4,7 @@
             "key_ID": "c055bd81-ab03-4658-b577-afae6056597b",
             "key": "MjM1MjQyMTMyNjcyMjMyNjgwMDIyNjMxMTA4NzY2MTQwMDE5NDQ3",
             "vendor": "ijk",
-            "KME_ID": "KME_2",
-            "extensions": { "route_type": "indirect", "max_age": "30000" }
+            "KME_ID": "KME_2"
         },
         {
             "key_ID": "484867f8-28b8-4f8a-900d-aa7e558ca60b",

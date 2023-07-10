@@ -7,7 +7,7 @@ use num::{BigUint, Num};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::hash::Hash;
-use std::{f32::consts::E, str};
+use std::str;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Status {
@@ -163,7 +163,12 @@ async fn get_keys_get(
                 matched_keys.splice(0..x as usize, []).collect()
             }
         }
-        _ => matched_keys.splice(0..1 as usize, []).collect(),
+        _ => {
+            let msg = "Number of keys not specified, defaulting to 1 key returned".to_string();
+            let key_container_ext_msg = Extension { message: Some(msg) };
+            extension_msgs.push(key_container_ext_msg);
+            matched_keys.splice(0..1 as usize, []).collect()
+        }
     };
 
     // Unwarp size,
@@ -177,6 +182,26 @@ async fn get_keys_get(
                 let error: GeneralError = GeneralError {
                     message: "Invalid size param provided.".to_string(),
                     details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            // Check if size param is multiple of 8 (Depending on KME status)
+            } else if x % 8 != 0 {
+                let error: GeneralError = GeneralError {
+                    message: "Size parameter shall be a multiple of 8".to_string(),
+                    details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            // Check if size param exceeds stored key size
+            // Can prob change to message only
+            } else if x > storage_data.key_size as u64 {
+                let details_key: String =
+                    format!("Key size stored in KME: {}", storage_data.key_size);
+                let details_val: Vec<_> = vec![format!("Key size requested: {}", x)];
+                let details: HashMap<String, Vec<String>> =
+                    HashMap::from([(details_key, details_val)]);
+                let error: GeneralError = GeneralError {
+                    message: "Size paramter exceeded stored key size".to_string(),
+                    details: Some(details),
                 };
                 return HttpResponse::BadRequest().json(error);
             }
@@ -265,8 +290,7 @@ async fn get_keys_post(
                 // Get the extension name and value
                 let mut exts_vendor: Vec<_> = Vec::new();
                 let mut req_exts_hashmap = HashMap::new();
-                // let mut exts_requested: Vec<_> = Vec::new();
-                // let mut exts_values: Vec<_> = Vec::new();
+
                 // Loop through the HashMaps
                 for extension in &mut extensions {
                     // Loop through the key value pairs
@@ -288,12 +312,14 @@ async fn get_keys_post(
                         }
                     }
                 }
+
                 // Currently supported extension by KME (Can change later to a read file function)
                 let supported_extensions: Vec<String> = vec![
                     "route_type".to_string(),
                     "transfer_method".to_string(),
                     "max_age".to_string(),
                 ];
+
                 // Checking if extension requested is in supported extensions
                 let mut unsupported_extension = Vec::new();
                 for (ext_requested, _) in &req_exts_hashmap {
@@ -301,17 +327,21 @@ async fn get_keys_post(
                         unsupported_extension.push(ext_requested.to_string());
                     }
                 }
+
+                // If unsupported extension flagged
+                //      returns Error and details of which extension is not supported
                 if unsupported_extension.len() > 0 {
                     let details = HashMap::from([(
                         "extension_mandatory_unsupported".to_string(),
                         unsupported_extension,
                     )]);
                     let error: GeneralError = GeneralError {
-                        message: "not all extension_mandatory parameters are supported".to_string(),
+                        message: "Not all extension_mandatory parameters are supported".to_string(),
                         details: Some(details),
                     };
                     return HttpResponse::BadRequest().json(error);
                 }
+
                 // Check if keys meet requested extension
                 let mut requested_keys: Vec<Key> = Vec::new();
                 for key in &mut matched_keys {
@@ -373,7 +403,7 @@ async fn get_keys_post(
     // else return Vec of respective keys truncated
     // If no size provided, default to whatever key size is stored
 
-    let mut matched_keys: Vec<Key> = match size {
+    let matched_keys: Vec<Key> = match size {
         Some(x) => {
             // Check if size param is valid
             if x == 0 {
