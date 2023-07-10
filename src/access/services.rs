@@ -57,9 +57,13 @@ pub struct Params {
 
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
 async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
+    // Obtaining state data from the Appstate
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+    // Obtaining slave SAE from path
     let slave_SAE_ID: String = path.into_inner();
+    // Checking if SAE_ID does not match server's SAE_ID
+
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
@@ -104,6 +108,7 @@ async fn get_keys_get(
     // Obtaining state data from the Appstate
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+    // Obtaining slave SAE from path
     let slave_SAE_ID: String = path.into_inner();
 
     // Checking if SAE_ID does not match server's SAE_ID
@@ -120,8 +125,8 @@ async fn get_keys_get(
 
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    let extension_warning: Vec<Extension> = Vec::new();
     for key in key_data.clone().keys.iter() {
+        // To be changed to ID lookup table
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
             matched_keys.push(key.clone())
         }
@@ -139,7 +144,7 @@ async fn get_keys_get(
     // if num = 0, return error
     // else return Vec of respective num of keys
     // If no number provided, default to 1
-    let mut matched_keys: Vec<Key> = match number {
+    let matched_keys: Vec<Key> = match number {
         Some(x) => {
             if x == 0 {
                 let error: GeneralError = GeneralError {
@@ -205,9 +210,9 @@ async fn get_keys_post(
     path: web::Path<String>,
     req_obj: web::Json<CreateKeyRequest>,
 ) -> impl Responder {
-    let slave_SAE_ID: String = path.into_inner();
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+    let slave_SAE_ID: String = path.into_inner();
     if slave_SAE_ID == storage_data.SAE_ID {
         let error: GeneralError = GeneralError {
             message: "Invalid slave SAE_ID".to_string(),
@@ -239,10 +244,110 @@ async fn get_keys_post(
         req_obj.extension_mandatory.clone(),
         req_obj.extension_optional.clone(),
     );
+
+    // Unwrap extensions requested
+    // First check if vendor extension requested matches matched_keys vendor
+    // Next, check if extension value matches requested
+
+    let mut matched_keys = match extension_mandatory {
+        Some(mut extensions) => {
+            if extensions.len() == 0 {
+                matched_keys
+            } else {
+                // Loop through the extensions vec
+                // Get the vendor
+                // Get the extension name and value
+                let mut exts_vendor: Vec<_> = Vec::new();
+                let mut req_exts_hashmap = HashMap::new();
+                // let mut exts_requested: Vec<_> = Vec::new();
+                // let mut exts_values: Vec<_> = Vec::new();
+                // Loop through the HashMaps
+                for extension in &mut extensions {
+                    // Loop through the key value pairs
+                    for (k, v) in extension {
+                        // Split the key_string once to get the vendor name and extension
+                        match k.split_once("_") {
+                            Some((vendor, ext)) => {
+                                exts_vendor.push(vendor);
+                                req_exts_hashmap.insert(ext, v);
+                            }
+                            // Handles if extensions not provided in request body
+                            None => {
+                                let error: GeneralError = GeneralError {
+                                    message: "Invalid extension provided".to_string(),
+                                    details: None,
+                                };
+                                return HttpResponse::BadRequest().json(error);
+                            }
+                        }
+                    }
+                }
+                // Currently supported extension by KME (Can change later to a read file function)
+                let supported_extensions: Vec<String> = vec![
+                    "route_type".to_string(),
+                    "transfer_method".to_string(),
+                    "max_age".to_string(),
+                ];
+                // Checking if extension requested is in supported extensions
+                let mut unsupported_extension = Vec::new();
+                for (ext_requested, _) in &req_exts_hashmap {
+                    if !supported_extensions.contains(&ext_requested.to_string()) {
+                        unsupported_extension.push(ext_requested.to_string());
+                    }
+                }
+                if unsupported_extension.len() > 0 {
+                    let details = HashMap::from([(
+                        "extension_mandatory_unsupported".to_string(),
+                        unsupported_extension,
+                    )]);
+                    let error: GeneralError = GeneralError {
+                        message: "not all extension_mandatory parameters are supported".to_string(),
+                        details: Some(details),
+                    };
+                    return HttpResponse::BadRequest().json(error);
+                }
+                // Check if keys meet requested extension
+                let mut requested_keys: Vec<Key> = Vec::new();
+                for key in &mut matched_keys {
+                    // Check key vendor (Assuming ext vendor is same for all ext requested)
+                    if key.vendor != exts_vendor[0] {
+                        continue;
+                    }
+                    let mut ext_met: Vec<bool> = Vec::new();
+                    // Some and None for key.extension NOT handled yet ERROR indirect routetype still showing
+                    for key_extensions in &key.extensions {
+                        for (i, (k, v)) in key_extensions.iter().enumerate() {
+                            println!("{}, {}, {}", i, k, v);
+                            if req_exts_hashmap.contains_key(&k.as_str())
+                                && req_exts_hashmap[&k.as_str()] == v
+                            {
+                                ext_met.push(true);
+                            }
+                        }
+                        let pass_count = ext_met.iter().filter(|&n| *n == true).count();
+                        if pass_count == req_exts_hashmap.len() {
+                            requested_keys.push(key.clone());
+                        }
+                    }
+                }
+                requested_keys
+            }
+        }
+        _ => matched_keys,
+    };
+
     // Unwrap number,
     // if num = 0, return error
     // else return Vec of respective num of keys
     // If no number provided, default to 1
+
+    if matched_keys.len() == 0 {
+        let error: GeneralError = GeneralError {
+            message: "No keys found meeting requested extensions".to_string(),
+            details: None,
+        };
+        return HttpResponse::NotFound().json(error);
+    }
     let matched_keys: Vec<Key> = match number {
         Some(x) => {
             if x == 0 {
@@ -256,10 +361,12 @@ async fn get_keys_post(
         }
         _ => matched_keys.splice(0..1 as usize, []).collect(),
     };
+
     // Unwarp size,
     // if size = 0, return error
     // else return Vec of respective keys truncated
     // If no size provided, default to whatever key size is stored
+
     let mut matched_keys: Vec<Key> = match size {
         Some(x) => {
             // Check if size param is valid
@@ -280,123 +387,19 @@ async fn get_keys_post(
         _ => matched_keys,
     };
 
-    // Unwrap extensions requested
-    // First check if vendor extension requested matches matched_keys vendor
-    // Next, check if extension value matches requested
-    let matched_keys = match extension_mandatory {
-        Some(mut extensions) => {
-            // Loop through the vec
-            // Get the vendor
-            // Get the extension name and value
-            let mut exts_vendor: Vec<_> = Vec::new();
-            let mut exts_requested: Vec<_> = Vec::new();
-            let mut exts_values: Vec<_> = Vec::new();
-            for extension in &mut extensions {
-                for (k, v) in extension {
-                    match k.split_once("_") {
-                        Some((vendor, ext)) => {
-                            exts_vendor.push(vendor);
-                            exts_requested.push(ext)
-                        }
-                        None => {
-                            let error: GeneralError = GeneralError {
-                                message: "Invalid extension provided".to_string(),
-                                details: None,
-                            };
-                            return HttpResponse::BadRequest().json(error);
-                        }
-                    }
-                    exts_values.push(v);
-                }
-                println!("{:?}", exts_vendor);
-                println!("{:?}", exts_requested);
-            }
-            let supported_extensions: Vec<String> =
-                vec!["route_type".to_string(), "transfer_method".to_string()];
-            let mut unsupported_extension = Vec::new();
-            for ext_requested in &exts_requested {
-                if !supported_extensions.contains(&ext_requested.to_string()) {
-                    unsupported_extension.push(ext_requested.to_string());
-                }
-            }
-            println!("{:?}", unsupported_extension);
-            if unsupported_extension.len() > 0 {
-                let details = HashMap::from([(
-                    "extension_mandatory_unsupported".to_string(),
-                    unsupported_extension,
-                )]);
-                let error: GeneralError = GeneralError {
-                    message: "not all extension_mandatory parameters are supported".to_string(),
-                    details: Some(details),
-                };
-                return HttpResponse::BadRequest().json(error);
-            }
-            // Check if keys meet requested extension
-            let mut ext_not_met: Vec<String> = Vec::new();
-            let mut requested_keys: Vec<Key> = Vec::new();
-            for key in &mut matched_keys {
-                // Some and None for key.extension NOT handled yet ERROR indirect routetype still showing
-                for key_extensions in &key.extensions {
-                    for (i, (k, v)) in key_extensions.iter().enumerate() {
-                        if exts_requested.contains(&k.as_str()) && exts_values[i] == v {
-                            requested_keys.push(key.clone());
-                        }
-                    }
-                }
-            }
-            requested_keys
-        }
-        _ => matched_keys,
+    let mut keys_vec = Vec::new();
+    for key in matched_keys {
+        keys_vec.push(KeyRes {
+            key_ID: key.key_ID,
+            key: key.key,
+        })
+    }
+    let extension = Extension { message: None };
+    let key_container_res = KeyContainerRes {
+        key_container_extension: vec![extension],
+        keys: keys_vec,
     };
-    println!("{:?}", matched_keys);
-    // let matched_keys: Vec<Key> = match extension_mandatory {
-    //     Some(data) => {
-    //         // Obtain extension vendor
-    //         let mut ext_vendors = Vec::new();
-    //         for extension in &data {
-    //             for (k, v) in extension {
-    //                 let ext_parts: Vec<&str> = k.split("_").collect();
-    //                 ext_vendors.push(ext_parts[0]);
-    //             }
-    //         }
-    //         // Check extension vendor matches key vendor
-    //         // let mut matched_keys = matched_keys.iter().map(|key| {for vendor in ext_vendors{
-    //         //     if key.vendor != vendor
-    //         // }})
-    //         // for key in &matched_keys {
-    //         //     if key.vendor != ext_vendors[0] {
-    //         //         continue;
-    //         //     }
-    //         //     for extension in &key.extensions {
-    //         //         match extension {
-    //         //             Some(key_extension) => {
-    //         //                 let matched =
-    //         //             }
-    //         //             _ => {}
-    //         //         }
-    //         //     }
-    //         // }
-    //         matched_keys
-    //     }
-    //     _ => matched_keys,
-    // };
-
-    // println!(
-    //     "{}, {}, {:?}, {:?}",
-    //     number.unwrap(),
-    //     size.unwrap(),
-    //     extension_mandatory.unwrap(),
-    //     extension_optional.unwrap()
-    // );
-
-    // let mut matched_keys: Vec<Key> = Vec::new();
-    // let extension_warning: Vec<Extension> = Vec::new();
-    // let extension = Extension { message: None };
-    // let key_container_res = KeyContainerRes {
-    //     key_container_extension: vec![extension],
-    //     keys: keys_vec,
-    // };
-    HttpResponse::Ok().json(matched_keys)
+    HttpResponse::Ok().json(key_container_res)
 }
 
 pub fn config(cfg: &mut web::ServiceConfig) {
