@@ -50,9 +50,14 @@ struct GeneralWarning {
     message: String,
 }
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Params {
+pub struct NumSizeParams {
     number: Option<u64>,
     size: Option<u64>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct KeyIDParams {
+    key_ID: Option<String>,
 }
 
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
@@ -102,7 +107,7 @@ async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl 
 async fn get_keys_get(
     data: web::Data<AppState>,
     path: web::Path<String>,
-    info: web::Query<Params>,
+    info: web::Query<NumSizeParams>,
 ) -> impl Responder {
     // Obtaining state data from the Appstate
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
@@ -478,10 +483,34 @@ async fn get_keys_post(
     HttpResponse::Ok().json(key_container_res)
 }
 
+#[get("/api/v1/keys/{master_SAE_ID}/dec_keys")]
+async fn get_keys_with_keyID_get(
+    data: web::Data<AppState>,
+    path: web::Path<String>,
+    info: web::Query<KeyIDParams>,
+) -> impl Responder {
+    // Obtaining state data from the Appstate
+    let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
+    let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
+    // Obtaining slave SAE from path
+    let slave_SAE_ID: String = path.into_inner();
+
+    // Checking if SAE_ID does not match server's SAE_ID
+    if slave_SAE_ID == storage_data.SAE_ID {
+        let error: GeneralError = GeneralError {
+            message: "Invalid slave SAE_ID".to_string(),
+            details: None,
+        };
+        return HttpResponse::BadRequest().json(error);
+    };
+    HttpResponse::Ok().json("Service 3")
+}
+
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(get_status)
         .service(get_keys_get)
-        .service(get_keys_post);
+        .service(get_keys_post)
+        .service(get_keys_with_keyID_get);
 }
 
 fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralError> {
