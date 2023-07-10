@@ -147,6 +147,7 @@ async fn get_keys_get(
     // If no number provided, default to 1
     let matched_keys: Vec<Key> = match number {
         Some(x) => {
+            // Check if number param > 0
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid number param provided.".to_string(),
@@ -154,7 +155,8 @@ async fn get_keys_get(
                 };
                 return HttpResponse::BadRequest().json(error);
             }
-
+            // Check if keys available is less than requested,
+            // Returns warning if so
             if matched_keys.len() < x as usize {
                 let msg = format!("Number of keys request exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
                 let key_container_ext_msg = Extension { message: Some(msg) };
@@ -271,7 +273,7 @@ async fn get_keys_post(
         };
         return HttpResponse::NotFound().json(error);
     }
-
+    // Obtain params from request body
     let (number, size, extension_mandatory, extension_optional) = (
         req_obj.number,
         req_obj.size,
@@ -280,9 +282,10 @@ async fn get_keys_post(
     );
 
     // Unwrap extensions requested
-    // First check if vendor extension requested matches matched_keys vendor
-    // Next, check if extension value matches requested
-
+    // First, data validate extension request format
+    // Next, check if vendor extension requested matches KME supported extensions
+    // Next, check if key vendor matches extension vendor
+    // Next, check if extension value matches requested extension value
     let mut matched_keys = match extension_mandatory {
         Some(mut extensions) => {
             if extensions.len() == 0 {
@@ -389,6 +392,7 @@ async fn get_keys_post(
     // If no number provided, default to 1
     let matched_keys: Vec<Key> = match number {
         Some(x) => {
+            // Check if number param > 0
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid number param provided.".to_string(),
@@ -396,6 +400,8 @@ async fn get_keys_post(
                 };
                 return HttpResponse::BadRequest().json(error);
             }
+            // Check if keys available is less than requested,
+            // Returns warning if so
             if matched_keys.len() < x as usize {
                 let msg = format!("Number of keys request exceeds number of keys that met requirements, defaulting to {} keys that meet requirement", matched_keys.len());
                 let key_container_ext_msg = Extension { message: Some(msg) };
@@ -426,6 +432,7 @@ async fn get_keys_post(
                     details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
+            // Check if size param is multiple of 8 (Depending on KME status)
             } else if x % 8 != 0 {
                 let error: GeneralError = GeneralError {
                     message: "Size parameter shall be a multiple of 8".to_string(),
