@@ -152,7 +152,7 @@ async fn get_keys_get(
             // Check if keys available is less than requested,
             // Returns warning if so
             if matched_keys.len() < x as usize {
-                let msg = format!("Number of keys request exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
+                let msg = format!("Number of keys requested exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
                 let key_container_ext_msg = Extension {
                     message: Some(msg),
                     details: None,
@@ -240,19 +240,13 @@ async fn get_keys_post(
     path: web::Path<String>,
     req_obj: web::Json<CreateKeyRequest>,
 ) -> impl Responder {
-    // Obtaining state data from the Appstate
-    let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
-    let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
     // Obtaining slave SAE from path
     let slave_SAE_ID: String = path.into_inner();
 
-    // Checking if SAE_ID does not match server's SAE_ID
-    if slave_SAE_ID == storage_data.SAE_ID {
-        let error: GeneralError = GeneralError {
-            message: "Invalid slave SAE_ID".to_string(),
-            details: None,
-        };
-        return HttpResponse::BadRequest().json(error);
+    // Obtaining state data from the Appstate
+    let (storage_data, key_data) = match validate_inp(data, &slave_SAE_ID) {
+        Err(error) => return HttpResponse::BadRequest().json(error),
+        Ok((storage_data, key_data)) => (storage_data, key_data),
     };
     // For key container extensions
     let mut extension_msgs: Vec<Extension> = Vec::new();
@@ -488,19 +482,13 @@ async fn get_keys_with_keyID_get(
     path: web::Path<String>,
     info: web::Query<KeyIDParams>,
 ) -> impl Responder {
-    // Obtaining state data from the Appstate
-    let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
-    let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
     // Obtaining slave SAE from path
     let master_SAE_ID: String = path.into_inner();
 
-    // Checking if SAE_ID does not match server's SAE_ID
-    if master_SAE_ID == storage_data.SAE_ID {
-        let error: GeneralError = GeneralError {
-            message: "Invalid master SAE_ID".to_string(),
-            details: None,
-        };
-        return HttpResponse::BadRequest().json(error);
+    // Obtaining state data from the Appstate
+    let (storage_data, key_data) = match validate_inp(data, &master_SAE_ID) {
+        Err(error) => return HttpResponse::BadRequest().json(error),
+        Ok((storage_data, key_data)) => (storage_data, key_data),
     };
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
@@ -579,19 +567,13 @@ async fn get_keys_with_keyID_post(
     path: web::Path<String>,
     req_obj: web::Json<CreateKeyIDRequest>,
 ) -> impl Responder {
-    // Obtaining state data from the Appstate
-    let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
-    let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();
     // Obtaining slave SAE from path
     let master_SAE_ID: String = path.into_inner();
 
-    // Checking if SAE_ID does not match server's SAE_ID
-    if master_SAE_ID == storage_data.SAE_ID {
-        let error: GeneralError = GeneralError {
-            message: "Invalid master SAE_ID".to_string(),
-            details: None,
-        };
-        return HttpResponse::BadRequest().json(error);
+    // Obtaining state data from the Appstate
+    let (storage_data, key_data) = match validate_inp(data, &master_SAE_ID) {
+        Err(error) => return HttpResponse::BadRequest().json(error),
+        Ok((storage_data, key_data)) => (storage_data, key_data),
     };
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();

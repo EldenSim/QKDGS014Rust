@@ -41,7 +41,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -51,7 +51,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -68,7 +68,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -99,7 +99,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -116,7 +116,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -161,7 +161,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -171,7 +171,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -181,7 +181,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -198,7 +198,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -208,7 +208,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -218,7 +218,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -242,7 +242,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -301,7 +301,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -311,7 +311,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -321,7 +321,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -331,7 +331,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -348,7 +348,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -358,7 +358,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -368,7 +368,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -385,7 +385,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -409,7 +409,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -419,7 +419,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -429,7 +429,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -439,7 +439,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -491,7 +491,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -522,7 +522,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -532,7 +532,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -570,7 +570,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -580,7 +580,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -618,7 +618,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -635,7 +635,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -645,7 +645,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -690,7 +690,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -714,7 +714,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -738,7 +738,7 @@
             "KME_ID": "KME_2",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -748,7 +748,7 @@
             "KME_ID": "KME_3",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -779,7 +779,7 @@
             "KME_ID": "KME_3",
             "extensions": {
                 "route_type": "indirect",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
@@ -803,7 +803,7 @@
             "KME_ID": "KME_3",
             "extensions": {
                 "route_type": "direct",
-                "transfer_method": "satelite"
+                "transfer_method": "satellite"
             }
         },
         {
