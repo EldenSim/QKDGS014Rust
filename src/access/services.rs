@@ -68,6 +68,9 @@ pub struct KeyIDParams {
 
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
 async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
+    // Only unwrap data if needed
+    // get_matching_keys() -> unwraps the key_data and loop through and check if key matches SAE requested
+    // get_SAE_KME_ID get SAE and KME id from loop up table
     // Obtaining state data from the Appstate
     let storage_data: KMEStorageData = data.kme_storage_data.lock().unwrap().clone();
     let key_data: KeyContainer = data.kme_key_data.lock().unwrap().clone();

@@ -5,7 +5,7 @@
     "max_key_count": 1000,
     "max_key_per_request": 128,
     "min_key_size": 64,
-    "max_key_size": 64,
+    "max_key_size": 128,
     "max_SAE_ID_count": 0,
     "QKD_ID": "QKD_1",
     "stored_key_count": 10
