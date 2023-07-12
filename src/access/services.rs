@@ -1,6 +1,9 @@
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, Responder};
 // use actix_web::Error::{BadRequest};
-use super::models::{CreateKeyIDRequest, CreateKeyRequest};
+use super::models::{
+    CreateKeyIDRequest, CreateKeyRequest, Extension, GeneralError, KeyContainerRes, KeyIDParams,
+    KeyRes, NumSizeParams, ServerError, Status,
+};
 use crate::{AppState, KMEStorageData, Key, KeyContainer};
 use base64::{engine::general_purpose, Engine as _};
 use num::{BigUint, Num};
@@ -9,62 +12,6 @@ use std::collections::HashMap;
 use std::hash::Hash;
 use std::str;
 use uuid::Uuid;
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct Status {
-    source_KME_ID: String,
-    target_KME_ID: String,
-    master_SAE_ID: String,
-    slave_SAE_ID: String,
-    key_size: u32,
-    max_key_count: u32,
-    max_key_per_request: u32,
-    min_key_size: u32,
-    max_key_size: u32,
-    stored_key_count: usize,
-    max_SAE_ID_count: u32,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct KeyContainerRes {
-    key_container_extension: Vec<Extension>,
-    keys: Vec<KeyRes>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct KeyRes {
-    key_ID: String,
-    key: String,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct Extension {
-    message: Option<String>,
-    details: Option<HashMap<String, Vec<String>>>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct GeneralError {
-    message: String,
-    details: Option<HashMap<String, Vec<String>>>,
-}
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct ServerError {
-    message: String,
-}
-struct GeneralWarning {
-    message: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-pub struct NumSizeParams {
-    number: Option<u64>,
-    size: Option<u64>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct KeyIDParams {
-    key_ID: Option<String>,
-}
 
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
 async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
@@ -140,14 +87,14 @@ async fn get_keys_get(
     let mut extension_msgs: Vec<Extension> = Vec::new();
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    for key in key_data.clone().keys.iter() {
+    for key in key_data.keys.iter() {
         // To be changed to ID lookup table
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
             matched_keys.push(key.clone())
         }
     }
     // If no keys match, return error message
-    if matched_keys.len() == 0 {
+    if matched_keys.is_empty() {
         let error: GeneralError = GeneralError {
             message: "No keys found in storage".to_string(),
             details: None,
@@ -190,7 +137,7 @@ async fn get_keys_get(
                 details: None,
             };
             extension_msgs.push(key_container_ext_msg);
-            matched_keys.splice(0..1 as usize, []).collect()
+            matched_keys.splice(0..1, []).collect()
         }
     };
 
@@ -229,11 +176,10 @@ async fn get_keys_get(
                 return HttpResponse::BadRequest().json(error);
             }
             // loop through the remaining keys to mutate the key string
-            let matched_keys = match trunc_by_size(x, matched_keys) {
+            match trunc_by_size(x, matched_keys) {
                 Ok(keys) => keys,
                 Err(e) => return HttpResponse::NotFound().json(e),
-            };
-            matched_keys
+            }
         }
         _ => matched_keys,
     };
@@ -279,14 +225,14 @@ async fn get_keys_post(
     let mut extension_msgs: Vec<Extension> = Vec::new();
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    for key in key_data.clone().keys.iter() {
+    for key in key_data.keys.iter() {
         if key.KME_ID[3..] == slave_SAE_ID[3..] {
             matched_keys.push(key.clone())
         }
     }
     // match every variable
     // If no keys match, return error message
-    if matched_keys.len() == 0 {
+    if matched_keys.is_empty() {
         let error: GeneralError = GeneralError {
             message: "No keys found in storage".to_string(),
             details: None,
@@ -308,7 +254,7 @@ async fn get_keys_post(
     // Next, check if extension value matches requested extension value
     let mut matched_keys = match extension_mandatory {
         Some(mut extensions) => {
-            if extensions.len() == 0 {
+            if extensions.is_empty() {
                 matched_keys
             } else {
                 // Loop through the extensions vec
@@ -322,7 +268,7 @@ async fn get_keys_post(
                     // Loop through the key value pairs
                     for (k, v) in extension {
                         // Split the key_string once to get the vendor name and extension
-                        match k.split_once("_") {
+                        match k.split_once('_') {
                             Some((vendor, ext)) => {
                                 exts_vendor.push(vendor);
                                 req_exts_hashmap.insert(ext, v);
@@ -348,7 +294,7 @@ async fn get_keys_post(
 
                 // Checking if extension requested is in supported extensions
                 let mut unsupported_extension = Vec::new();
-                for (ext_requested, _) in &req_exts_hashmap {
+                for ext_requested in req_exts_hashmap.keys() {
                     if !supported_extensions.contains(&ext_requested.to_string()) {
                         unsupported_extension.push(ext_requested.to_string());
                     }
@@ -356,7 +302,7 @@ async fn get_keys_post(
 
                 // If unsupported extension flagged
                 //      returns Error and details of which extension is not supported
-                if unsupported_extension.len() > 0 {
+                if !unsupported_extension.is_empty() {
                     let details = HashMap::from([(
                         "extension_mandatory_unsupported".to_string(),
                         unsupported_extension,
@@ -385,7 +331,7 @@ async fn get_keys_post(
                                 ext_met.push(true);
                             }
                         }
-                        let pass_count = ext_met.iter().filter(|&n| *n == true).count();
+                        let pass_count = ext_met.iter().filter(|&n| *n).count();
                         if pass_count == req_exts_hashmap.len() {
                             requested_keys.push(key.clone());
                         }
@@ -398,7 +344,7 @@ async fn get_keys_post(
     };
 
     // Check if no keys match extension and return error
-    if matched_keys.len() == 0 {
+    if matched_keys.is_empty() {
         let error: GeneralError = GeneralError {
             message: "No keys found meeting requested extensions".to_string(),
             details: None,
@@ -441,7 +387,7 @@ async fn get_keys_post(
                 details: None,
             };
             extension_msgs.push(key_container_ext_msg);
-            matched_keys.splice(0..1 as usize, []).collect()
+            matched_keys.splice(0..1, []).collect()
         }
     };
 
@@ -480,11 +426,10 @@ async fn get_keys_post(
                 return HttpResponse::BadRequest().json(error);
             }
             // loop through the remaining keys to mutate the key string
-            let matched_keys = match trunc_by_size(x, matched_keys) {
+            match trunc_by_size(x, matched_keys) {
                 Ok(keys) => keys,
                 Err(e) => return HttpResponse::NotFound().json(e),
-            };
-            matched_keys
+            }
         }
         _ => matched_keys,
     };
@@ -526,7 +471,7 @@ async fn get_keys_with_keyID_get(
     };
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
-    for key in key_data.clone().keys.iter() {
+    for key in key_data.keys.iter() {
         // To be changed to ID lookup table
         if key.KME_ID[3..] == master_SAE_ID[3..] {
             matched_keys.push(key.clone())
@@ -536,7 +481,7 @@ async fn get_keys_with_keyID_get(
     let key_ID = match &info.key_ID {
         Some(id) => {
             // Use uuid crate to parse string to check if param is uuid format
-            if !Uuid::parse_str(id).is_ok() {
+            if Uuid::parse_str(id).is_err() {
                 let error: GeneralError = GeneralError {
                     message: "Invalid key_ID provided".to_string(),
                     details: None,
@@ -561,7 +506,7 @@ async fn get_keys_with_keyID_get(
         }
     }
     // Check if key is found
-    if requested_keys.len() == 0 {
+    if requested_keys.is_empty() {
         let error: GeneralError = GeneralError {
             message: "Requested key not found".to_string(),
             details: None,
@@ -618,7 +563,7 @@ async fn get_keys_with_keyID_post(
     // Obtain the keys that matches the SAE_ID in server's storage
     let mut matched_keys: Vec<Key> = Vec::new();
     let mut key_IDs: Vec<String> = Vec::new();
-    for key in key_data.clone().keys.iter() {
+    for key in key_data.keys.iter() {
         // To be changed to ID lookup table
         if key.KME_ID[3..] == master_SAE_ID[3..] {
             matched_keys.push(key.clone());
@@ -632,8 +577,8 @@ async fn get_keys_with_keyID_post(
     let req_key_IDs = match &req_obj.key_IDs {
         Some(req_key_IDs) => {
             for key_ID in req_key_IDs {
-                for (k, v) in key_ID {
-                    if !Uuid::parse_str(&v).is_ok() {
+                for (_k, v) in key_ID {
+                    if Uuid::parse_str(v).is_err() {
                         invalid_IDs.push(v.to_string());
                     } else {
                         valid_IDs.push(v.to_string());
@@ -671,7 +616,7 @@ async fn get_keys_with_keyID_post(
         }
     }
     // If key_ID is not found is throw warning in the key container extension
-    if not_found_IDs.len() > 0 {
+    if !not_found_IDs.is_empty() {
         let msg: String = format!("{} key_ID provided not found in KME", not_found_IDs.len());
         let details = HashMap::from([("key_IDs not found".to_string(), not_found_IDs)]);
         let key_container_ext_msg = Extension {
@@ -687,7 +632,7 @@ async fn get_keys_with_keyID_post(
         }
     }
     // Final check if there are keys found (Should not be needed)
-    if requested_keys.len() == 0 {
+    if requested_keys.is_empty() {
         let error: GeneralError = GeneralError {
             message: "Requested keys not found".to_string(),
             details: None,

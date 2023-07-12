@@ -3,16 +3,12 @@ use actix_web::{get, web, App, HttpServer};
 use dotenv::dotenv;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
-use std::fmt::Display;
-use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::net::{IpAddr, Ipv4Addr};
-use std::path::Path;
 use std::sync::Mutex;
 
 mod access;
@@ -119,7 +115,7 @@ async fn index() -> String {
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let config = Config::build();
-    let (kme_id, storage_path, key_data_path) = (
+    let (_kme_id, storage_path, key_data_path) = (
         config.clone().unwrap().kme_id,
         config.clone().unwrap().storage_path,
         config.clone().unwrap().key_data_path,
@@ -143,8 +139,7 @@ async fn main() -> std::io::Result<()> {
     let localhost = true;
     use local_ip_address::local_ip;
     let my_local_ip = if localhost {
-        let localhost_v4 = IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1));
-        localhost_v4
+        IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))
     } else {
         local_ip().unwrap()
     };
