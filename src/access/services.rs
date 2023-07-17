@@ -64,7 +64,7 @@ fn get_storage_key_data(data: web::Data<AppState>) -> (KMEStorageData, KeyContai
 fn check_SAE_ID(other_SAE_ID: &String, self_SAE_ID: &String) -> Result<(), GeneralError> {
     if other_SAE_ID == self_SAE_ID {
         let error: GeneralError = GeneralError {
-            message: "Invalid slave SAE_ID".to_string(),
+            message: "Invalid SAE_ID in url".to_string(),
             details: None,
         };
         return Err(error);
@@ -90,13 +90,13 @@ fn get_matched_keys(keys: Vec<Key>, slave_SAE_ID: &String) -> Option<Vec<Key>> {
 // Get AppState data and checks if the slave SAE_ID input is not equal to self
 fn validate_inp(
     data: web::Data<AppState>,
-    slave_SAE_ID: &String,
+    SAE_ID: &String,
 ) -> Result<(KMEStorageData, KeyContainer), GeneralError> {
     // Obtaining state data from the Appstate
     let (storage_data, key_data) = get_storage_key_data(data);
 
     // Checking if SAE_ID does not match server's SAE_ID
-    match check_SAE_ID(slave_SAE_ID, &storage_data.SAE_ID) {
+    match check_SAE_ID(SAE_ID, &storage_data.SAE_ID) {
         Err(error) => Err(error),
         _ => Ok((storage_data, key_data)),
     }
@@ -145,6 +145,13 @@ async fn get_keys_get(
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid number param provided.".to_string(),
+                    details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            } else if x > storage_data.max_key_per_request as u64 {
+                let error: GeneralError = GeneralError {
+                    message: "Number of keys requested exceeds max_key_per_request of KMS."
+                        .to_string(),
                     details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
@@ -389,6 +396,13 @@ async fn get_keys_post(
             if x == 0 {
                 let error: GeneralError = GeneralError {
                     message: "Invalid number param provided.".to_string(),
+                    details: None,
+                };
+                return HttpResponse::BadRequest().json(error);
+            } else if x > storage_data.max_key_per_request as u64 {
+                let error: GeneralError = GeneralError {
+                    message: "Number of keys requested exceeds max_key_per_request of KMS."
+                        .to_string(),
                     details: None,
                 };
                 return HttpResponse::BadRequest().json(error);

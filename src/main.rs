@@ -154,7 +154,8 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .configure(services::config)
     })
-    .bind_openssl(format!("{my_local_ip}:8080"), builder)?
+    // .bind_openssl(format!("{my_local_ip}:8080"), builder)?
+    .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
