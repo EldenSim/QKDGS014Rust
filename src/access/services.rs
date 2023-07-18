@@ -29,10 +29,9 @@ async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl 
     };
 
     // Checking number of keys stored that matches SAE_ID
-    let stored_key_count: usize = match get_matched_keys(key_data.keys, &slave_SAE_ID) {
-        Some(matched_keys) => matched_keys.len(),
-        _ => 0,
-    };
+    let stored_key_count: usize = get_matched_keys(key_data.keys, &slave_SAE_ID)
+        .unwrap_or(vec![])
+        .len();
 
     // KME and SAE IDs to be changed in the future when uuids are known
     let status: Status = Status {
@@ -73,10 +72,10 @@ fn check_SAE_ID(other_SAE_ID: &String, self_SAE_ID: &String) -> Result<(), Gener
 }
 
 // Checks if any key in own storage matches the requested SAE and returns the vec of keys or None
-fn get_matched_keys(keys: Vec<Key>, slave_SAE_ID: &String) -> Option<Vec<Key>> {
+fn get_matched_keys(keys: Vec<Key>, other_SAE_ID: &String) -> Option<Vec<Key>> {
     let mut matched_keys: Vec<Key> = Vec::new();
     for key in keys.iter() {
-        if key.KME_ID[3..] == slave_SAE_ID[3..] {
+        if key.KME_ID[3..] == other_SAE_ID[3..] {
             matched_keys.push(key.clone())
         }
     }
@@ -113,8 +112,8 @@ async fn get_keys_get(
 
     // Obtaining state data from the Appstate
     let (storage_data, key_data) = match validate_inp(data, &slave_SAE_ID) {
-        Err(error) => return HttpResponse::BadRequest().json(error),
         Ok((storage_data, key_data)) => (storage_data, key_data),
+        Err(error) => return HttpResponse::BadRequest().json(error),
     };
 
     // Obtaining the params from the URL
@@ -252,8 +251,8 @@ async fn get_keys_post(
 
     // Obtaining state data from the Appstate
     let (storage_data, key_data) = match validate_inp(data, &slave_SAE_ID) {
-        Err(error) => return HttpResponse::BadRequest().json(error),
         Ok((storage_data, key_data)) => (storage_data, key_data),
+        Err(error) => return HttpResponse::BadRequest().json(error),
     };
     // For key container extensions
     let mut extension_msgs: Vec<Extension> = Vec::new();

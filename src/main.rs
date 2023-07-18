@@ -147,15 +147,18 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         // Need to remove for production server
-        let cors = Cors::default();
+        let cors = Cors::default()
+            .allow_any_header()
+            .allow_any_method()
+            .allow_any_origin();
         App::new()
             .app_data(app_data.clone())
             .wrap(cors)
             .service(index)
             .configure(services::config)
     })
-    // .bind_openssl(format!("{my_local_ip}:8080"), builder)?
-    .bind(("127.0.0.1", 8080))?
+    .bind_openssl(format!("{my_local_ip}:8080"), builder)?
+    // .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
