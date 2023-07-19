@@ -13,9 +13,8 @@ use std::hash::Hash;
 use std::str;
 use uuid::Uuid;
 
-// Common function
-// - Check if SAE_ID != slave SAE_ID
-// - Obtain keys that matches slave SAE_ID
+// TODO:
+// When checking if key KME == SAE, change to a look up table with respective KME_ID and SAE_ID
 
 #[get("/api/v1/keys/{slave_SAE_ID}/status")]
 async fn get_status(data: web::Data<AppState>, path: web::Path<String>) -> impl Responder {
@@ -86,16 +85,16 @@ fn get_matched_keys(keys: Vec<Key>, other_SAE_ID: &String) -> Option<Vec<Key>> {
     }
 }
 
-// Get AppState data and checks if the slave SAE_ID input is not equal to self
+// Get AppState data and checks if the master/slave SAE_ID input is not equal to self
 fn validate_inp(
     data: web::Data<AppState>,
-    SAE_ID: &String,
+    other_SAE_ID: &String,
 ) -> Result<(KMEStorageData, KeyContainer), GeneralError> {
     // Obtaining state data from the Appstate
     let (storage_data, key_data) = get_storage_key_data(data);
 
     // Checking if SAE_ID does not match server's SAE_ID
-    match check_SAE_ID(SAE_ID, &storage_data.SAE_ID) {
+    match check_SAE_ID(other_SAE_ID, &storage_data.SAE_ID) {
         Err(error) => Err(error),
         _ => Ok((storage_data, key_data)),
     }
@@ -147,6 +146,7 @@ async fn get_keys_get(
                     details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
+            // Check if request number exceeds max_key_per_request of KME
             } else if x > storage_data.max_key_per_request as u64 {
                 let error: GeneralError = GeneralError {
                     message: "Number of keys requested exceeds max_key_per_request of KMS."
@@ -158,7 +158,7 @@ async fn get_keys_get(
             // Check if keys available is less than requested,
             // Returns warning if so
             if matched_keys.len() < x as usize {
-                let msg = format!("Number of keys requested exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
+                let msg: String = format!("Number of keys requested exceeds number of keys stored, defaulting to {} keys that meet requirement", matched_keys.len());
                 let key_container_ext_msg = Extension {
                     message: Some(msg),
                     details: None,
@@ -193,7 +193,7 @@ async fn get_keys_get(
                     details: None,
                 };
                 return HttpResponse::BadRequest().json(error);
-            // Check if size param is multiple of 8 (Depending on KME status)
+            // Check if size param is multiple of 8 (Depending on how KME is set up)
             } else if x % 8 != 0 {
                 let error: GeneralError = GeneralError {
                     message: "Size parameter shall be a multiple of 8".to_string(),
@@ -224,7 +224,7 @@ async fn get_keys_get(
     };
 
     // Clear the other variables not needed
-    let mut keys_vec = Vec::new();
+    let mut keys_vec: Vec<KeyRes> = Vec::new();
     for key in matched_keys {
         keys_vec.push(KeyRes {
             key_ID: key.key_ID,
@@ -232,7 +232,7 @@ async fn get_keys_get(
         })
     }
     // let extension = Extension { message: None };
-    let key_container_res = KeyContainerRes {
+    let key_container_res: KeyContainerRes = KeyContainerRes {
         key_container_extension: extension_msgs,
         keys: keys_vec,
     };
@@ -294,7 +294,7 @@ async fn get_keys_post(
                 // Get the vendor
                 // Get the extension name and value
                 let mut exts_vendor: Vec<_> = Vec::new();
-                let mut req_exts_hashmap = HashMap::new();
+                let mut req_exts_hashmap: HashMap<&str, &mut String> = HashMap::new();
 
                 // Loop through the HashMaps
                 for extension in &mut extensions {
@@ -303,6 +303,7 @@ async fn get_keys_post(
                         // Split the key_string once to get the vendor name and extension
                         match k.split_once('_') {
                             Some((vendor, ext)) => {
+                                // Might need to clean the string further, rm extra "_" or spaces
                                 exts_vendor.push(vendor);
                                 req_exts_hashmap.insert(ext, v);
                             }
@@ -326,7 +327,7 @@ async fn get_keys_post(
                 ];
 
                 // Checking if extension requested is in supported extensions
-                let mut unsupported_extension = Vec::new();
+                let mut unsupported_extension: Vec<String> = Vec::new();
                 for ext_requested in req_exts_hashmap.keys() {
                     if !supported_extensions.contains(&ext_requested.to_string()) {
                         unsupported_extension.push(ext_requested.to_string());
@@ -336,7 +337,7 @@ async fn get_keys_post(
                 // If unsupported extension flagged
                 //      returns Error and details of which extension is not supported
                 if !unsupported_extension.is_empty() {
-                    let details = HashMap::from([(
+                    let details: HashMap<String, Vec<String>> = HashMap::from([(
                         "extension_mandatory_unsupported".to_string(),
                         unsupported_extension,
                     )]);
