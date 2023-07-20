@@ -45,7 +45,7 @@ pub struct Key {
     pub key_ID: String,
     pub key: String,
     pub vendor: String,
-    pub extensions: Option<HashMap<String, String>>, // extensions: HashMap<String, KeyExtensions>,
+    pub extensions: Option<HashMap<String, String>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
@@ -54,20 +54,6 @@ pub struct KeyExtensions {
     pub max_age: Option<String>,
     pub transfer_method: Option<String>,
 }
-
-// #[derive(Serialize, Deserialize, Clone, Debug)]
-// struct KMEStatus {
-//     source_KME_ID: String,
-//     target_KME_ID: String,
-//     master_SAE_ID: String,
-//     slave_SAE_ID: String,
-//     key_size: i32,
-//     stored_key_count: i32,
-//     max_key_count: i32,
-//     max_key_per_request: i32,
-//     max_key_size: i32,
-//     max_SAE_ID_count: i32,
-// }
 
 #[derive(Debug, Clone)]
 struct Config {
