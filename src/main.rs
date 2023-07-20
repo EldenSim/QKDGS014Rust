@@ -14,45 +14,45 @@ use std::sync::Mutex;
 mod access;
 use access::services;
 
-struct AppState {
-    kme_storage_data: Mutex<KMEStorageData>,
-    kme_key_data: Mutex<KeyContainer>,
+pub struct AppState {
+    pub kme_storage_data: Mutex<KMEStorageData>,
+    pub kme_key_data: Mutex<KeyContainer>,
     // Temp: String
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-struct KMEStorageData {
-    KME_ID: String,
-    SAE_ID: String,
-    QKD_ID: String,
-    key_size: u32,
-    max_key_count: u32,
-    max_key_per_request: u32,
-    min_key_size: u32,
-    max_key_size: u32,
-    max_SAE_ID_count: u32,
-    stored_key_count: usize,
+pub struct KMEStorageData {
+    pub KME_ID: String,
+    pub SAE_ID: String,
+    pub QKD_ID: String,
+    pub key_size: u32,
+    pub max_key_count: u32,
+    pub max_key_per_request: u32,
+    pub min_key_size: u32,
+    pub max_key_size: u32,
+    pub max_SAE_ID_count: u32,
+    pub stored_key_count: usize,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-struct KeyContainer {
-    keys: Vec<Key>,
+pub struct KeyContainer {
+    pub keys: Vec<Key>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-struct Key {
-    KME_ID: String,
-    key_ID: String,
-    key: String,
-    vendor: String,
-    extensions: Option<HashMap<String, String>>, // extensions: HashMap<String, KeyExtensions>,
+pub struct Key {
+    pub KME_ID: String,
+    pub key_ID: String,
+    pub key: String,
+    pub vendor: String,
+    pub extensions: Option<HashMap<String, String>>, // extensions: HashMap<String, KeyExtensions>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
-struct KeyExtensions {
-    route_type: Option<String>,
-    max_age: Option<String>,
-    transfer_method: Option<String>,
+pub struct KeyExtensions {
+    pub route_type: Option<String>,
+    pub max_age: Option<String>,
+    pub transfer_method: Option<String>,
 }
 
 // #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -123,12 +123,15 @@ async fn main() -> std::io::Result<()> {
 
     let data = get_KME_storage_data(storage_path);
     let key_data = get_key_data(key_data_path);
+    // Created outside of HttpServer so that data is a globally shared state among different threads
+    // May have to change Mutext type to Arc type so that it is shared mutable states (NOT SURE?)
     let app_data = web::Data::new(AppState {
         kme_storage_data: data.unwrap().into(),
         kme_key_data: key_data.unwrap().into(),
     });
 
     // Https certs
+    // Used mkcert to generate certs
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
     builder
         .set_private_key_file("localhost-key.pem", SslFiletype::PEM)
