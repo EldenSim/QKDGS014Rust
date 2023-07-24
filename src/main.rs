@@ -120,9 +120,11 @@ async fn main() -> std::io::Result<()> {
     // Used mkcert to generate certs
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
     builder
-        .set_private_key_file("localhost-key.pem", SslFiletype::PEM)
+        .set_private_key_file("QKDGS014Rust-S-key.pem", SslFiletype::PEM)
         .unwrap();
-    builder.set_certificate_chain_file("localhost.pem").unwrap();
+    builder
+        .set_certificate_chain_file("QKDGS014Rust-S.pem")
+        .unwrap();
 
     // bind to local LAN ip address
     let localhost = true;
