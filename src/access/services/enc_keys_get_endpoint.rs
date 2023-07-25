@@ -1,4 +1,4 @@
-use super::utils::functions::{get_matched_keys, trunc_by_size, validate_inp};
+use super::utils::functions::{delete_keys, get_matched_keys, trunc_by_size, validate_inp};
 use crate::access::models::{Extension, GeneralError, KeyContainerRes, KeyRes, NumSizeParams};
 use crate::{AppState, Key};
 use actix_web::{get, web, HttpResponse, Responder};
@@ -14,7 +14,7 @@ async fn get_keys_get(
     let slave_SAE_ID: String = path.into_inner();
 
     // Obtaining state data from the Appstate
-    let (storage_data, key_data) = match validate_inp(data, &slave_SAE_ID) {
+    let (storage_data, key_data) = match validate_inp(data.clone(), &slave_SAE_ID) {
         Ok((storage_data, key_data)) => (storage_data, key_data),
         Err(error) => return HttpResponse::BadRequest().json(error),
     };
@@ -26,7 +26,7 @@ async fn get_keys_get(
     let mut extension_msgs: Vec<Extension> = Vec::new();
 
     // Getting the keys stored that matches the slave_SAE_ID
-    let mut matched_keys: Vec<Key> = match get_matched_keys(key_data.keys, &slave_SAE_ID) {
+    let mut matched_keys: Vec<Key> = match get_matched_keys(key_data.keys.clone(), &slave_SAE_ID) {
         Some(matched_keys) => matched_keys,
         _ => {
             let error: GeneralError = GeneralError {
@@ -138,8 +138,9 @@ async fn get_keys_get(
     // let extension = Extension { message: None };
     let key_container_res: KeyContainerRes = KeyContainerRes {
         key_container_extension: extension_msgs,
-        keys: keys_vec,
+        keys: keys_vec.clone(),
     };
+    delete_keys(data, keys_vec);
 
     HttpResponse::Ok().json(key_container_res)
 }

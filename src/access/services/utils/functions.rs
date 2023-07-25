@@ -1,4 +1,4 @@
-use crate::access::models::GeneralError;
+use crate::access::models::{GeneralError, KeyRes};
 use crate::{AppState, KMEStorageData, Key, KeyContainer};
 use actix_web::web;
 use base64::{engine::general_purpose, Engine as _};
@@ -27,7 +27,7 @@ pub fn check_SAE_ID(other_SAE_ID: &String, self_SAE_ID: &String) -> Result<(), G
 // Checks if any key in own storage matches the requested SAE and returns the vec of keys or None
 pub fn get_matched_keys(keys: Vec<Key>, other_SAE_ID: &String) -> Option<Vec<Key>> {
     let mut matched_keys: Vec<Key> = Vec::new();
-    for key in keys.iter() {
+    for key in keys {
         if key.KME_ID[3..] == other_SAE_ID[3..] {
             matched_keys.push(key.clone())
         }
@@ -96,4 +96,48 @@ pub fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralE
         key.key = truc_encode_key;
     }
     Ok(keys)
+}
+
+pub fn delete_keys(data: web::Data<AppState>, keys_to_delete: Vec<KeyRes>) {
+    let mut current_keys_in_storage = data.kme_key_data.lock().unwrap();
+    *current_keys_in_storage = current_keys_in_storage
+        .keys
+        .to_vec()
+        .into_iter()
+        .filter(|x| !keys_to_delete.contains(&KeyRes::from(x)))
+        .collect::<KeyContainer>();
+}
+
+impl FromIterator<Key> for KeyContainer {
+    fn from_iter<T: IntoIterator<Item = Key>>(iter: T) -> Self {
+        let mut key_vec = Vec::new();
+        for key in iter {
+            key_vec.push(key)
+        }
+        let mut collection = KeyContainer { keys: key_vec };
+        collection
+    }
+}
+
+impl KeyContainer {
+    fn new(keys: Vec<Key>) -> Self {
+        Self { keys: keys }
+    }
+}
+
+impl From<&Key> for KeyRes {
+    fn from(value: &Key) -> Self {
+        KeyRes {
+            key_ID: value.key_ID.clone(),
+            key: value.key.clone(),
+        }
+    }
+}
+impl PartialEq for KeyRes {
+    fn eq(&self, other: &Self) -> bool {
+        self.key_ID == other.key_ID
+    }
+    fn ne(&self, other: &Self) -> bool {
+        self.key_ID != other.key_ID
+    }
 }

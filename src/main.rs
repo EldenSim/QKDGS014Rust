@@ -9,14 +9,14 @@ use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::net::{IpAddr, Ipv4Addr};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 mod access;
 use access::services;
 
 pub struct AppState {
-    pub kme_storage_data: Mutex<KMEStorageData>,
-    pub kme_key_data: Mutex<KeyContainer>,
+    pub kme_storage_data: Arc<Mutex<KMEStorageData>>,
+    pub kme_key_data: Arc<Mutex<KeyContainer>>,
     // Temp: String
 }
 
@@ -112,8 +112,8 @@ async fn main() -> std::io::Result<()> {
     // Created outside of HttpServer so that data is a globally shared state among different threads
     // May have to change Mutext type to Arc type so that it is shared mutable states (NOT SURE?)
     let app_data = web::Data::new(AppState {
-        kme_storage_data: data.unwrap().into(),
-        kme_key_data: key_data.unwrap().into(),
+        kme_storage_data: Arc::new(data.unwrap().into()),
+        kme_key_data: Arc::new(key_data.unwrap().into()),
     });
 
     // Https certs
