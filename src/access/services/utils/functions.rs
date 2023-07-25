@@ -144,3 +144,43 @@ impl PartialEq for KeyRes {
         self.key_ID != other.key_ID
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_check_SAE_ID() {
+        let SAE_ID = "SAE_2".to_string();
+        let other_SAE_ID = "SAE_3".to_string();
+        assert!(check_SAE_ID(&SAE_ID, &other_SAE_ID).is_ok())
+    }
+    use serde_json::Value;
+    #[test]
+    fn test_trunc_by_size() {
+        let size: u64 = 64;
+        let data = r#"
+            [
+                {
+                    "key_ID": "2cd3874e-73d2-4d02-b671-fada2d25bb56",
+                    "key": "MTg2MTQ2MDY4NjE4NjYyNjE0NTA3Nzc1NTgyNTIzMDU2NTYxODQ2",
+                    "vendor": "xyz",
+                    "KME_ID": "KME_2",
+                    "extensions": { "route_type": "direct", "transfer_method": "qkd" }
+                },
+                {
+                    "key_ID": "23779ae7-f65b-4606-986d-f0a910e41e4e",
+                    "key": "MTc2MjEzMDgwOTIwMjkxMzI1OTQ0MTk5NDc5MTU1Njk1MDQ4MTMx",
+                    "vendor": "ijk",
+                    "KME_ID": "KME_2",
+                    "extensions": { "route_type": "direct", "transfer_method": "qkd" }
+                }
+            ]
+        "#;
+        let keys: Vec<Key> = serde_json::from_str(data).unwrap();
+        let truncated_keys = trunc_by_size(size, keys.clone()).unwrap();
+        assert!(truncated_keys[0].key_ID == keys[0].key_ID);
+        assert!(truncated_keys[0].key != keys[0].key);
+        assert!(truncated_keys[1].key_ID == keys[1].key_ID);
+        assert!(truncated_keys[1].key != keys[1].key);
+    }
+}
