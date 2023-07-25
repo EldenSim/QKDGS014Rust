@@ -1,4 +1,4 @@
-use super::utils::functions::{trunc_by_size, validate_inp};
+use super::utils::functions::{delete_keys, trunc_by_size, validate_inp};
 use crate::access::models::{CreateKeyRequest, Extension, GeneralError, KeyContainerRes, KeyRes};
 use crate::{AppState, Key};
 use actix_web::{post, web, HttpResponse, Responder};
@@ -13,7 +13,7 @@ async fn get_keys_post(
     let slave_SAE_ID: String = path.into_inner();
 
     // Obtaining state data from the Appstate
-    let (storage_data, key_data) = match validate_inp(data, &slave_SAE_ID) {
+    let (storage_data, key_data) = match validate_inp(data.clone(), &slave_SAE_ID) {
         Ok((storage_data, key_data)) => (storage_data, key_data),
         Err(error) => return HttpResponse::BadRequest().json(error),
     };
@@ -248,7 +248,11 @@ async fn get_keys_post(
     }
     let key_container_res = KeyContainerRes {
         key_container_extension: extension_msgs,
-        keys: keys_vec,
+        keys: keys_vec.clone(),
     };
+
+    // Delete keys returned as specified in documentation post-condition
+    delete_keys(data, keys_vec);
+
     HttpResponse::Ok().json(key_container_res)
 }

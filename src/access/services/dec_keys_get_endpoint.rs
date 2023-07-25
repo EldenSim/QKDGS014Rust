@@ -1,4 +1,4 @@
-use super::utils::functions::validate_inp;
+use super::utils::functions::{delete_keys, validate_inp};
 use crate::access::models::{
     Extension, GeneralError, KeyContainerRes, KeyIDParams, KeyRes, ServerError,
 };
@@ -16,7 +16,7 @@ async fn get_keys_with_keyID_get(
     let master_SAE_ID: String = path.into_inner();
 
     // Obtaining state data from the Appstate
-    let (storage_data, key_data) = match validate_inp(data, &master_SAE_ID) {
+    let (storage_data, key_data) = match validate_inp(data.clone(), &master_SAE_ID) {
         Err(error) => return HttpResponse::BadRequest().json(error),
         Ok((storage_data, key_data)) => (storage_data, key_data),
     };
@@ -72,6 +72,8 @@ async fn get_keys_with_keyID_get(
     }
 
     // Repackage key into KeyRes struct for KeyContainerRes
+
+    // Clear the other variables not needed
     let mut keys_vec = Vec::new();
     for key in requested_keys {
         keys_vec.push(KeyRes {
@@ -85,8 +87,11 @@ async fn get_keys_with_keyID_get(
     };
     let key_container_res = KeyContainerRes {
         key_container_extension: vec![extension],
-        keys: keys_vec,
+        keys: keys_vec.clone(),
     };
+
+    // Delete keys returned as specified in documentation post-condition
+    delete_keys(data, keys_vec);
 
     HttpResponse::Ok().json(key_container_res)
 }

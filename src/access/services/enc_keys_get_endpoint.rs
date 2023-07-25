@@ -38,8 +38,9 @@ async fn get_keys_get(
     };
 
     // Unwrap number,
-    // if num = 0, return error
-    // else return Vec of respective num of keys
+    // If num = 0, return error,
+    // If num > max_key_per_request, return error
+    // Else return Vec with requested num of keys
     // If no number provided, default to 1
     let matched_keys: Vec<Key> = match number {
         Some(x) => {
@@ -127,6 +128,8 @@ async fn get_keys_get(
         _ => matched_keys,
     };
 
+    // Repackage key into KeyRes struct for KeyContainerRes
+
     // Clear the other variables not needed
     let mut keys_vec: Vec<KeyRes> = Vec::new();
     for key in matched_keys {
@@ -140,6 +143,8 @@ async fn get_keys_get(
         key_container_extension: extension_msgs,
         keys: keys_vec.clone(),
     };
+
+    // Delete keys returned as specified in documentation post-condition
     delete_keys(data, keys_vec);
 
     HttpResponse::Ok().json(key_container_res)
