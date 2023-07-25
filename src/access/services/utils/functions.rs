@@ -98,33 +98,35 @@ pub fn trunc_by_size(size: u64, mut keys: Vec<Key>) -> Result<Vec<Key>, GeneralE
     Ok(keys)
 }
 
+// Get current keys in state from AppSatae and delete the keys given in keys_to_delete vec
 pub fn delete_keys(data: web::Data<AppState>, keys_to_delete: Vec<KeyRes>) {
+    // Unlocks the data from the Arc and Mutex type - https://snorre.io/blog/2018-08-23-shared-mutable-cache-in-actix-web/
+    // Arc is a thread safe reference count pointer and that invoking clone on such a pointer creates a new reference to the same value in the heap.
     let mut current_keys_in_storage = data.kme_key_data.lock().unwrap();
+
+    // Edit the keys in the storage by mutating the data inside the mutex
     *current_keys_in_storage = current_keys_in_storage
         .keys
         .to_vec()
         .into_iter()
+        // May have a faster way to filter the key
         .filter(|x| !keys_to_delete.contains(&KeyRes::from(x)))
         .collect::<KeyContainer>();
 }
 
+// Implementing the FromIterator trait for KeyContainer for delete_keys function
 impl FromIterator<Key> for KeyContainer {
     fn from_iter<T: IntoIterator<Item = Key>>(iter: T) -> Self {
         let mut key_vec = Vec::new();
         for key in iter {
             key_vec.push(key)
         }
-        let mut collection = KeyContainer { keys: key_vec };
-        collection
+        KeyContainer { keys: key_vec }
     }
 }
 
-impl KeyContainer {
-    fn new(keys: Vec<Key>) -> Self {
-        Self { keys: keys }
-    }
-}
-
+// Implementing the From trait for KeyRes, used in delete_keys function
+// For comparing the Key and KeyRes types from the matched keys to be deleted
 impl From<&Key> for KeyRes {
     fn from(value: &Key) -> Self {
         KeyRes {
@@ -133,6 +135,7 @@ impl From<&Key> for KeyRes {
         }
     }
 }
+// Implementing the PartialEq trait for KeyRes (Not needed for now)
 impl PartialEq for KeyRes {
     fn eq(&self, other: &Self) -> bool {
         self.key_ID == other.key_ID
