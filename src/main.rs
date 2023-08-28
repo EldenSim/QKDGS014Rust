@@ -134,7 +134,7 @@ async fn main() -> std::io::Result<()> {
     } else {
         local_ip().unwrap()
     };
-    println!("Server is hosted on: https://{my_local_ip}:8081");
+    println!("Server is hosted on: https://{my_local_ip}:8080");
 
     HttpServer::new(move || {
         // Need to remove for production server
@@ -148,7 +148,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .configure(services::config)
     })
-    .bind_openssl(format!("{my_local_ip}:8081"), builder)?
+    .bind_openssl(format!("{my_local_ip}:8080"), builder)?
     // .bind(("127.0.0.1", 8080))?d
     .run()
     .await

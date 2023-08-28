@@ -2,446 +2,421 @@ swagger: "2.0"
 
 # Information on the API specification
 info:
-  version: "0.0.1"
-  title: QKD GS 014 API draft (GovTech)
-  description: This specification is for the draft implementation of the ETSI GS 014 API. This API handles the request of keys by the Secure Application Entity from the Key Manager in a QKD Network.
-  
-  contact:
-    name: Elden
-    email: abc@gmail.com
-    
-  license:
-    name: license
-    url: http://license.com
+    version: "0.0.1"
+    title: QKD GS 014 API draft
+    description: This specification is for the draft implementation of the ETSI GS 014 API. This API handles the request of keys by the Secure Application Entity from the Key Manager in a QKD Network.
+
+    contact:
+        name: Elden
+        email: abc@gmail.com
+
+    license:
+        name: license
+        url: http://license.com
 
 # Endpoint URL
 host: 127.0.0.1:5001
 basePath: /api/v1/keys
 schemes:
-  - http
-  - https
-  
+    - http
+    - https
+
 consumes:
-  - application/json
+    - application/json
 
 produces:
- - application/json
+    - application/json
 
 # From the GS 014 Doc
 tags:
-  - name: status
-    description: Returns Status from a KME to the calling SAE. Status contains information on keys available to be requested by a master SAE for a specified slave SAE.
+    - name: status
+      description: Returns Status from a KME to the calling SAE. Status contains information on keys available to be requested by a master SAE for a specified slave SAE.
 
-  - name: enc_keys
-    description: Returns Key container data from the KME to the calling master SAE. Key container data contains one or more keys. The calling master SAE may supply Key request data to specify the requirement on Key container data. The slave SAE specified by the slave_SAE_ID parameter may subsequently request matching keys from a remote KME using key_ID identifiers from the returned Key container.
-  - name: dec_keys
-    description: Returns Key container from the KME to the calling slave SAE. Key container contains keys matching those previously delivered to a remote master SAE based on the Key IDs supplied from the remote master SAE in response to its call to Get key. The KME shall reject the request with a 401 HTTP status code if the SAE ID of the requestor was not an SAE ID supplied to the "Get key" method each time it was called resulting in the return of any of the Key IDs being requested.
+    - name: enc_keys
+      description: Returns Key container data from the KME to the calling master SAE. Key container data contains one or more keys. The calling master SAE may supply Key request data to specify the requirement on Key container data. The slave SAE specified by the slave_SAE_ID parameter may subsequently request matching keys from a remote KME using key_ID identifiers from the returned Key container.
+    - name: dec_keys
+      description: Returns Key container from the KME to the calling slave SAE. Key container contains keys matching those previously delivered to a remote master SAE based on the Key IDs supplied from the remote master SAE in response to its call to Get key. The KME shall reject the request with a 401 HTTP status code if the SAE ID of the requestor was not an SAE ID supplied to the "Get key" method each time it was called resulting in the return of any of the Key IDs being requested.
 
 # External docs to help developer (FAQ on a website)
 externalDocs:
-  description: This is an external doc
-  url: http://developer.xyz/docs
+    description: This is an external doc
+    url: http://developer.xyz/docs
 
 # Paths
 paths:
-  /{slave_SAE_ID}/status:
-    get:
-      tags:
-        - status
-        
-      summary: Get the status of the KME with requested SAE_ID
-      description: Returns Status from a KME to the calling SAE. Status contains information on type keys available to be requested by a master SAE for a specified slave SAE.
-      
-      parameters:
-        - $ref: "#/parameters/slaveSAEIDInPath"
-      
-      externalDocs:
-        description: Link to /status details
-        url: http://developer.xyz/docs/status
-      
-      # Consumes & produces
-      consumes:
-        []
-      produces:
-        - application/json
-      
-      responses:
-        "200":
-          description: Get status of KME for keys that is shared between master and requested slave SAE
-          schema: 
-            $ref: "#/definitions/status_res"
-        
-        "400":
-          description: Bad request format
-          schema:
-            $ref: "#/definitions/GeneralError"
-         
-        "401":
-          description: Unauthorised
-          schema:
-            $ref: "#/definitions/GeneralError"
-        
-        "503":
-          description: Error on server side
-          schema:
-            $ref: "#/definitions/GeneralError"
-  
-  /{slave_SAE_ID}/enc_keys:
-    get:
-      tags:
-        - enc_keys
-      
-      summary: Get keys from the KME storage that meet the number and/or size requirements
-      description: Returns a JSON file of all the keys that meet the requested requirements 
-      
-      parameters:
-        - $ref: "#/parameters/slaveSAEIDInPath"
-        - in: query
-          name: number
-          type: number
-          required: false
-        - in: query
-          name: size
-          type: number
-          required: false
-      
-      externalDocs:
-        description: Link to /enc_key details
-        url: http://developer.xyz/docs/enc_key
-      
-      consumes:
-        []
-      produces:
-        - application/json
-        
-      responses:
-        "200":
-          description: Returns the keys that meets the requested requirements
-          schema: 
-            $ref: "#/definitions/key_container_res"
-        "400":
-          description: Bad request format
-          schema:
-            $ref: "#/definitions/GeneralResError"
-         
-        "401":
-          description: Unauthorised
-          schema:
-            $ref: "#/definitions/GeneralError"
-        
-        "503":
-          description: Error on server side
-          schema:
-            $ref: "#/definitions/GeneralError"
-    post:
-      tags:
-        - enc_keys
-      
-      summary: Get keys from the KME storage that meet the requested requirements
-      description: Returns a JSON file of all the keys that meet the requested requirements
-      # requestBody:
-      #   description: Key request body
-      #   required: true
-      #   content:
-      #     application/json:
-      #       schema:
-      #         $ref: '#/definitions/key_req'
-      #       examples:
-      #         number: 3
-      #         size: 1024
-      #         additional_slave_SAE_IDs: [
-      #             "ABCDEFG"
-      #           ]
-      parameters:
-        - $ref: "#/parameters/slaveSAEIDInPath"
-      
-      externalDocs:
-        description: Link to /enc_key details
-        url: http://developer.xyz/docs/enc_key
-      
-      consumes:
-        - application/json
-      produces:
-        - application/json
-        
-      responses:
-        "200":
-          description: Returns the keys that meets the requested requirements
-          schema: 
-            $ref: "#/definitions/key_container_res"
-        "400":
-          description: Bad request format
-          schema:
-            $ref: "#/definitions/GeneralResError"
-         
-        "401":
-          description: Unauthorised
-          schema:
-            $ref: "#/definitions/GeneralError"
-        
-        "503":
-          description: Error on server side
-          schema:
-            $ref: "#/definitions/GeneralError"
+    /{slave_SAE_ID}/status:
+        get:
+            tags:
+                - status
 
-  /{master_SAE_ID}/dec_keys:
-    get:
-      tags:
-        - dec_keys
-      summary: Get key from the KME storage using the requested key_ID
-      description: Returns a JSON file of the key that meet the requested key_ID
-      
-      parameters:
-        - $ref: "#/parameters/masterSAEIDInPath"
-        - in: query
-          name: key_ID
-          type: string
-          required: true
-      
-      externalDocs:
-        description: Link to /enc_key details
-        url: http://developer.xyz/docs/enc_key
-      
-      consumes:
-        []
-      produces:
-        - application/json
-        
-      responses:
-        "200":
-          description: Returns the keys that meets the requested key_ID
-          schema: 
-            $ref: "#/definitions/key_container_res"
-        "400":
-          description: Bad request format
-          schema:
-            $ref: "#/definitions/GeneralResError"
-         
-        "401":
-          description: Unauthorised
-          schema:
-            $ref: "#/definitions/GeneralError"
-        
-        "503":
-          description: Error on server side
-          schema:
-            $ref: "#/definitions/GeneralError"
-    post:
-      tags:
-        - dec_keys
-      summary: Get key from the KME storage using the requested key_IDs
-      description: Returns a JSON file of the keys that meet the requested key_IDs
-      
-      # requestBody:
-      #   description: Key_IDs request body
-      #   required: true
-      #   content:
-      #     application/json:
-      #       schema:
-      #         $ref: '#/definitions/key_IDs_req'
+            summary: Get the status of the KME with requested SAE_ID
+            description: Returns Status from a KME to the calling SAE. Status contains information on type keys available to be requested by a master SAE for a specified slave SAE.
 
-      
-      parameters:
-        - $ref: "#/parameters/masterSAEIDInPath"
-      
-      externalDocs:
-        description: Link to /enc_key details
-        url: http://developer.xyz/docs/enc_key
-      
-      consumes:
-        - application/json
-      produces:
-        - application/json
-        
-      responses:
-        "200":
-          description: Returns the keys that meets the requested key_ID
-          schema: 
-            $ref: "#/definitions/key_container_res"
-        "400":
-          description: Bad request format
-          schema:
-            $ref: "#/definitions/GeneralResError"
-         
-        "401":
-          description: Unauthorised
-          schema:
-            $ref: "#/definitions/GeneralError"
-        
-        "503":
-          description: Error on server side
-          schema:
-            $ref: "#/definitions/GeneralError"
-  
+            parameters:
+                - $ref: "#/parameters/slaveSAEIDInPath"
+
+            externalDocs:
+                description: Link to /status details
+                url: http://developer.xyz/docs/status
+
+            # Consumes & produces
+            consumes: []
+            produces:
+                - application/json
+
+            responses:
+                "200":
+                    description: Get status of KME for keys that is shared between master and requested slave SAE
+                    schema:
+                        $ref: "#/definitions/status_res"
+
+                "400":
+                    description: Bad request format
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+                "401":
+                    description: Unauthorised
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+                "503":
+                    description: Error on server side
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+    /{slave_SAE_ID}/enc_keys:
+        get:
+            tags:
+                - enc_keys
+
+            summary: Get keys from the KME storage that meet the number and/or size requirements
+            description: Returns a JSON file of all the keys that meet the requested requirements
+
+            parameters:
+                - $ref: "#/parameters/slaveSAEIDInPath"
+                - in: query
+                  name: number
+                  type: number
+                  required: false
+                - in: query
+                  name: size
+                  type: number
+                  required: false
+
+            externalDocs:
+                description: Link to /enc_key details
+                url: http://developer.xyz/docs/enc_key
+
+            consumes: []
+            produces:
+                - application/json
+
+            responses:
+                "200":
+                    description: Returns the keys that meets the requested requirements
+                    schema:
+                        $ref: "#/definitions/key_container_res"
+                "400":
+                    description: Bad request format
+                    schema:
+                        $ref: "#/definitions/GeneralResError"
+
+                "401":
+                    description: Unauthorised
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+                "503":
+                    description: Error on server side
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+        post:
+            tags:
+                - enc_keys
+
+            summary: Get keys from the KME storage that meet the requested requirements
+            description: Returns a JSON file of all the keys that meet the requested requirements
+            # requestBody:
+            #   description: Key request body
+            #   required: true
+            #   content:
+            #     application/json:
+            #       schema:
+            #         $ref: '#/definitions/key_req'
+            #       examples:
+            #         number: 3
+            #         size: 1024
+            #         additional_slave_SAE_IDs: [
+            #             "ABCDEFG"
+            #           ]
+            parameters:
+                - $ref: "#/parameters/slaveSAEIDInPath"
+
+            externalDocs:
+                description: Link to /enc_key details
+                url: http://developer.xyz/docs/enc_key
+
+            consumes:
+                - application/json
+            produces:
+                - application/json
+
+            responses:
+                "200":
+                    description: Returns the keys that meets the requested requirements
+                    schema:
+                        $ref: "#/definitions/key_container_res"
+                "400":
+                    description: Bad request format
+                    schema:
+                        $ref: "#/definitions/GeneralResError"
+
+                "401":
+                    description: Unauthorised
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+                "503":
+                    description: Error on server side
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+    /{master_SAE_ID}/dec_keys:
+        get:
+            tags:
+                - dec_keys
+            summary: Get key from the KME storage using the requested key_ID
+            description: Returns a JSON file of the key that meet the requested key_ID
+
+            parameters:
+                - $ref: "#/parameters/masterSAEIDInPath"
+                - in: query
+                  name: key_ID
+                  type: string
+                  required: true
+
+            externalDocs:
+                description: Link to /enc_key details
+                url: http://developer.xyz/docs/enc_key
+
+            consumes: []
+            produces:
+                - application/json
+
+            responses:
+                "200":
+                    description: Returns the keys that meets the requested key_ID
+                    schema:
+                        $ref: "#/definitions/key_container_res"
+                "400":
+                    description: Bad request format
+                    schema:
+                        $ref: "#/definitions/GeneralResError"
+
+                "401":
+                    description: Unauthorised
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+                "503":
+                    description: Error on server side
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+        post:
+            tags:
+                - dec_keys
+            summary: Get key from the KME storage using the requested key_IDs
+            description: Returns a JSON file of the keys that meet the requested key_IDs
+
+            # requestBody:
+            #   description: Key_IDs request body
+            #   required: true
+            #   content:
+            #     application/json:
+            #       schema:
+            #         $ref: '#/definitions/key_IDs_req'
+
+            parameters:
+                - $ref: "#/parameters/masterSAEIDInPath"
+
+            externalDocs:
+                description: Link to /enc_key details
+                url: http://developer.xyz/docs/enc_key
+
+            consumes:
+                - application/json
+            produces:
+                - application/json
+
+            responses:
+                "200":
+                    description: Returns the keys that meets the requested key_ID
+                    schema:
+                        $ref: "#/definitions/key_container_res"
+                "400":
+                    description: Bad request format
+                    schema:
+                        $ref: "#/definitions/GeneralResError"
+
+                "401":
+                    description: Unauthorised
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
+                "503":
+                    description: Error on server side
+                    schema:
+                        $ref: "#/definitions/GeneralError"
+
 # Definitions
 definitions:
-  GeneralError:
-    required:
-      - message
-    properties:
-      message:
-        type: string
-    
-  GeneralResError:
-    required:
-      - message
-    properties:
-      message:
-        type: string
-      details:
-        type: array
-        items: 
-          type: object
-        minItems: 1
+    GeneralError:
+        required:
+            - message
+        properties:
+            message:
+                type: string
 
-  status_res:
-    required:
-      - source_KME_ID
-      - target_KME_ID
-      - master_SAE_ID 
-      - slave_SAE_ID
-      - key_size
-      - stored_key_count
-      - max_key_count
-      - max_key_per_request
-      - min_key_size
-      - max_key_size
-      - max_SAE_ID_count
-    properties:
-      source_KME_ID:
-        type: string
-      target_KME_ID:
-        type: string
-      master_SAE_ID:
-        type: string
-      slave_SAE_ID:
-        type: string
-      key_size:
-        type: number
-        minimum: 64
-      stored_key_count:
-        type: number
-      max_key_count:
-        type: number
-      max_key_per_request:
-        type: number
-      min_key_size:
-        type: number
-        minimum: 1
-      max_key_size:
-        type: number
-      max_SAE_ID_count:
-        type: number
-      status_extension:
-        type: object
+    GeneralResError:
+        required:
+            - message
+        properties:
+            message:
+                type: string
+            details:
+                type: array
+                items:
+                    type: object
+                minItems: 1
 
-  # key_req:
-  #   required:
-  #     - number
-  #     - size
-  #   properties:
-  #     number:
-  #       type: number
-  #     size:
-  #       type: number
-  #     additional_slave_SAE_IDs:
-  #       type: array
-  #       items: 
-  #         type: string
-  #     extension_mandatory:
-  #       type: array
-  #       items:
-  #         type: object
-  #     extension_optional:
-  #       type: array
-  #       items:
-  #         type: object
-  
-  key_container_res:
-    required:
-      - keys
-    properties:
-      keys:
-        type: array
-        items:
-          $ref: "#/definitions/key"
-      key_container_extension:
-        type: object
-          
-  key:
-    required:
-      - key_ID
-      - key
-    properties:
-      key_ID:
-        type: string
-      key:
-        type: string
-      key_ID_extension:
-        type: object
-      key_extension:
-        type: object
-  
-  # key_IDs_req:
-  #   required:
-  #     - key_IDs
-  #   properties:
-  #     key_IDs:
-  #       type: array
-  #       items:
-  #         $ref: "#/definitions/key_ID"
-  #     key_IDs_extension:
-  #       type: object
-        
-  # key_ID:
-  #   required:
-  #     - key_ID
-  #   properties:
-  #     key_ID:
-  #       type: string
-  #     key_ID_extension:
-  #       type: object
-        
+    status_res:
+        required:
+            - source_KME_ID
+            - target_KME_ID
+            - master_SAE_ID
+            - slave_SAE_ID
+            - key_size
+            - stored_key_count
+            - max_key_count
+            - max_key_per_request
+            - min_key_size
+            - max_key_size
+            - max_SAE_ID_count
+        properties:
+            source_KME_ID:
+                type: string
+            target_KME_ID:
+                type: string
+            master_SAE_ID:
+                type: string
+            slave_SAE_ID:
+                type: string
+            key_size:
+                type: number
+                minimum: 64
+            stored_key_count:
+                type: number
+            max_key_count:
+                type: number
+            max_key_per_request:
+                type: number
+            min_key_size:
+                type: number
+                minimum: 1
+            max_key_size:
+                type: number
+            max_SAE_ID_count:
+                type: number
+            status_extension:
+                type: object
+
+    # key_req:
+    #   required:
+    #     - number
+    #     - size
+    #   properties:
+    #     number:
+    #       type: number
+    #     size:
+    #       type: number
+    #     additional_slave_SAE_IDs:
+    #       type: array
+    #       items:
+    #         type: string
+    #     extension_mandatory:
+    #       type: array
+    #       items:
+    #         type: object
+    #     extension_optional:
+    #       type: array
+    #       items:
+    #         type: object
+
+    key_container_res:
+        required:
+            - keys
+        properties:
+            keys:
+                type: array
+                items:
+                    $ref: "#/definitions/key"
+            key_container_extension:
+                type: object
+
+    key:
+        required:
+            - key_ID
+            - key
+        properties:
+            key_ID:
+                type: string
+            key:
+                type: string
+            key_ID_extension:
+                type: object
+            key_extension:
+                type: object
+
+    # key_IDs_req:
+    #   required:
+    #     - key_IDs
+    #   properties:
+    #     key_IDs:
+    #       type: array
+    #       items:
+    #         $ref: "#/definitions/key_ID"
+    #     key_IDs_extension:
+    #       type: object
+
+    # key_ID:
+    #   required:
+    #     - key_ID
+    #   properties:
+    #     key_ID:
+    #       type: string
+    #     key_ID_extension:
+    #       type: object
 
 parameters:
-  slaveSAEIDInPath:
-    name: slave_SAE_ID
-    in: path
-    type: string
-    required: true
-      
-  masterSAEIDInPath:
-    name: master_SAE_ID
-    in: path
-    type: string
-    required: true
+    slaveSAEIDInPath:
+        name: slave_SAE_ID
+        in: path
+        type: string
+        required: true
+
+    masterSAEIDInPath:
+        name: master_SAE_ID
+        in: path
+        type: string
+        required: true
 
 # To be determine in the future
 
-
 components:
-  securitySchemes:
-    BasicAuth:
-      type: http
-      scheme: basic
+    securitySchemes:
+        BasicAuth:
+            type: http
+            scheme: basic
 security:
-  - BasicAuth: []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    - BasicAuth: []
